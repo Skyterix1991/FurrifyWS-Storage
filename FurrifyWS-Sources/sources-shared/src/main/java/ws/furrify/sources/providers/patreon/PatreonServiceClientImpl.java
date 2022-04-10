@@ -2,8 +2,8 @@ package ws.furrify.sources.providers.patreon;
 
 import feign.FeignException;
 import feign.Logger;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
 import io.github.resilience4j.feign.FeignDecorators;
@@ -14,9 +14,6 @@ import ws.furrify.shared.exception.ExternalProviderForbiddenException;
 import ws.furrify.shared.exception.ExternalProviderServerSideErrorException;
 import ws.furrify.shared.exception.ExternalProviderTokenExpiredException;
 import ws.furrify.shared.exception.HttpStatus;
-import ws.furrify.sources.providers.deviantart.DeviantArtServiceClient;
-import ws.furrify.sources.providers.deviantart.dto.DeviantArtDeviationQueryDTO;
-import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserQueryDTO;
 import ws.furrify.sources.providers.patreon.dto.PatreonCampaignQueryDTO;
 import ws.furrify.sources.providers.patreon.dto.PatreonPostQueryDTO;
 
@@ -39,8 +36,8 @@ public class PatreonServiceClientImpl implements PatreonServiceClient {
 
         this.patreonServiceClient = Resilience4jFeign.builder(decorators)
                 .client(new OkHttpClient())
-                .encoder(new GsonEncoder())
-                .decoder(new GsonDecoder())
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(PatreonServiceClient.class))
                 .logLevel(Logger.Level.FULL)
                 .target(PatreonServiceClient.class, "https://www.patreon.com/api/oauth2/v2/");

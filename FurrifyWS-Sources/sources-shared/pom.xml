@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-gson</artifactId>
+            <artifactId>feign-jackson</artifactId>
             <version>11.8</version>
         </dependency>
         <dependency>
