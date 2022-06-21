@@ -2,18 +2,11 @@ package ws.furrify.sources.source.strategy;
 
 import ws.furrify.sources.keycloak.KeycloakServiceClient;
 import ws.furrify.sources.keycloak.KeycloakServiceClientImpl;
-import ws.furrify.sources.keycloak.PropertyHolder;
-import ws.furrify.sources.providers.deviantart.DeviantArtScrapperClientImpl;
-import ws.furrify.sources.providers.deviantart.DeviantArtServiceClient;
-import ws.furrify.sources.providers.deviantart.DeviantArtServiceClientImpl;
-import ws.furrify.sources.providers.deviantart.dto.DeviantArtDeviationQueryDTO;
-import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserQueryDTO;
 import ws.furrify.sources.providers.patreon.PatreonScrapperClient;
 import ws.furrify.sources.providers.patreon.PatreonScrapperClientImpl;
 import ws.furrify.sources.providers.patreon.PatreonServiceClient;
 import ws.furrify.sources.providers.patreon.PatreonServiceClientImpl;
 import ws.furrify.sources.providers.patreon.dto.PatreonCampaignQueryDTO;
-import ws.furrify.sources.providers.patreon.dto.PatreonPostQueryDTO;
 
 import java.io.IOException;
 import java.net.URI;
@@ -94,8 +87,8 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
         int postId = Integer.parseInt(postIdRaw.replaceAll("[^0-9.]", ""));
 
         // TODO Uncomment when patreon api updated to support post public information fetch
-/*        // Get post from patreon api
-        PatreonPostQueryDTO postQueryDTO = patreonService.getPost(
+        // Get post from patreon api
+/*        PatreonPostQueryDTO postQueryDTO = patreonService.getPost(
                 SourceStrategy.getKeycloakBearerToken(keycloakService, BROKER_ID),
                 postId
         );
@@ -111,16 +104,16 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
 
     @Override
     public ValidationResult validateUser(final HashMap<String, String> data) {
-        if (data.get(POST_URL_FIELD) == null || data.get(POST_URL_FIELD).isBlank()) {
+        if (data.get(CAMPAIGN_URL_FIELD) == null || data.get(CAMPAIGN_URL_FIELD).isBlank()) {
             return ValidationResult.invalid("Campaign url is required.");
         }
 
         URI uri;
 
         try {
-            uri = new URI(data.get(POST_URL_FIELD));
+            uri = new URI(data.get(CAMPAIGN_URL_FIELD));
             if (uri.getHost() == null) {
-                throw new URISyntaxException(data.get(POST_URL_FIELD), "Domain is missing.");
+                throw new URISyntaxException(data.get(CAMPAIGN_URL_FIELD), "Domain is missing.");
             }
         } catch (URISyntaxException e) {
             return ValidationResult.invalid("Campaign url is invalid.");
@@ -141,7 +134,7 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
 
         try {
             // TODO There is no cleaner way for now to get correct id from weird links that work
-            campaignId = patreonScrapperClient.getCampaignId(data.get(POST_URL_FIELD));
+            campaignId = patreonScrapperClient.getCampaignId(data.get(CAMPAIGN_URL_FIELD));
         } catch (IOException e) {
             return ValidationResult.invalid("Campaign url is invalid.");
         }
