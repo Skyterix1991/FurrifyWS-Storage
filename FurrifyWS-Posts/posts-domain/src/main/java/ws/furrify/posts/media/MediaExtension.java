@@ -23,9 +23,13 @@ public enum MediaExtension {
     /**
      * File extensions
      */
-    EXTENSION_OGG("OGG", MediaType.AUDIO, "application/ogg", "audio/ogg"),
+    EXTENSION_OGG("OGG", MediaType.AUDIO, "application/ogg", "audio/ogg", "audio/vorbis"),
     EXTENSION_FLAC("FLAC", MediaType.AUDIO, "audio/x-flac", "audio/flac"),
+    EXTENSION_AIF("AIF", MediaType.AUDIO, "audio/aiff", "audio/x-aiff"),
+    EXTENSION_AIFF("AIFF", MediaType.AUDIO, "audio/aiff", "audio/x-aiff"),
     EXTENSION_MP3("MP3", MediaType.AUDIO, "audio/mpeg"),
+    EXTENSION_MP4_AUDIO("MP4", MediaType.AUDIO, "video/mp4"),
+    EXTENSION_WMA("WMA", MediaType.AUDIO, "audio/x-ms-wma"),
     EXTENSION_WAV("WAV", MediaType.AUDIO, "audio/wav", "audio/vnd.wave", "audio/wave", "audio/x-wav"),
 
     EXTENSION_GIF("GIF", MediaType.ANIMATION, "image/gif"),
@@ -38,7 +42,7 @@ public enum MediaExtension {
     EXTENSION_MKV("MKV", MediaType.VIDEO, "video/x-matroska"),
     EXTENSION_WEBM("WEBM", MediaType.VIDEO, "video/webm"),
     EXTENSION_MP4("MP4", MediaType.VIDEO, "video/mp4"),
-    EXTENSION_MPEG("MPEG", MediaType.IMAGE, "video/mpeg"),
+    EXTENSION_MPEG("MPEG", MediaType.VIDEO, "video/mpeg"),
 
     EXTENSION_WEBP("WEBP", MediaType.IMAGE, "image/webp"),
     EXTENSION_ICO("ICO", MediaType.IMAGE, "image/vnd.microsoft.icon"),
@@ -68,6 +72,8 @@ public enum MediaExtension {
     private final MediaType type;
 
     private final static Pattern FILENAME_PATTERN = Pattern.compile("^[a-zA-Z0-9](?:[a-zA-Z0-9() ._-]*[a-zA-Z0-9() ._-])?\\.[a-zA-Z0-9_-]+$");
+
+    private final static short MAX_FILENAME_LENGTH = 255;
 
     MediaExtension(final String extension, final MediaType type, final String... mimeTypes) {
         this.extension = extension;
@@ -104,7 +110,7 @@ public enum MediaExtension {
     }
 
     public static boolean isFilenameValid(String filename) {
-        return filename != null && FILENAME_PATTERN.matcher(filename).matches();
+        return filename != null && FILENAME_PATTERN.matcher(filename).matches() && filename.length() <= MAX_FILENAME_LENGTH;
     }
 
 

@@ -11,7 +11,7 @@
                 <generated-value strategy="SEQUENCE"/>
             </id>
             <basic name="value">
-                <column nullable="false"/>
+                <column name="tag_value" nullable="false"/>
             </basic>
             <basic name="ownerId">
                 <column updatable="false" nullable="false"/>

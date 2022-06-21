@@ -24,7 +24,7 @@
     </build>
 
     <properties>
-        <keycloak.version>16.1.1</keycloak.version>
+        <keycloak.version>18.0.1</keycloak.version>
     </properties>
 
     <dependencies>
@@ -94,18 +94,18 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.28</version>
+            <version>8.0.29</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.3</version>
+            <version>42.4.0</version>
         </dependency>
         <!-- Tools -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>7.0.1</version>
+            <version>7.1.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

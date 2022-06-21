@@ -84,22 +84,69 @@ class SourceTest {
     }
 
     @Test
-    @DisplayName("Update data with new values")
+    @DisplayName("Update data with new values for artist")
     void updateData() {
-        // Given new data and new strategy
-        SourceStrategy sourceStrategy = new PatreonV1SourceStrategy();
-        HashMap<String, String> data = new HashMap<>() {{
+        // Given source with origin artist, request data and new mocked strategy
+        HashMap<String, String> requestData = new HashMap<>() {{
             put("test", "test2");
         }};
+
+        sourceSnapshot = SourceSnapshot.builder()
+                .id(0L)
+                .sourceId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .originId(UUID.randomUUID())
+                .originType(SourceOriginType.ARTIST)
+                .strategy(new SourceStrategy() {
+                    @Override
+                    public ValidationResult validateMedia(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+
+                    @Override
+                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+
+                    @Override
+                    public ValidationResult validateAttachment(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+                })
+                .data(new HashMap<>())
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        // Update source with new values
+        source = Source.restore(sourceSnapshot);
+
+        // New strategy
+        SourceStrategy newStrategy = new SourceStrategy() {
+            @Override
+            public ValidationResult validateMedia(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public ValidationResult validateUser(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public ValidationResult validateAttachment(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+        };
+
         // When updateData() method called
         // Then update all values
-        source.updateData(data, sourceStrategy);
+        source.updateData(requestData, newStrategy);
 
-        var snapshot = source.getSnapshot();
+        var updatedSnapshot = source.getSnapshot();
 
         assertAll(
-                () -> assertEquals(sourceStrategy, snapshot.getStrategy(), "Strategy was not updated."),
-                () -> assertEquals(data, snapshot.getData(), "Data was not updated.")
+                () -> assertEquals(newStrategy, updatedSnapshot.getStrategy(), "Strategy was not updated."),
+                () -> assertEquals(requestData, updatedSnapshot.getData(), "Data was not updated.")
         );
     }
 
@@ -136,6 +183,140 @@ class SourceTest {
         assertAll(
                 () -> assertEquals(sourceSnapshot.getStrategy(), snapshot.getStrategy(), "Strategy was not updated."),
                 () -> assertEquals(data, snapshot.getData(), "Data was not updated.")
+        );
+    }
+
+    @Test
+    @DisplayName("Update data with new values for media")
+    void updateData4() {
+        // Given source with origin artist, request data and new mocked strategy
+        HashMap<String, String> requestData = new HashMap<>() {{
+            put("test", "test2");
+        }};
+
+        sourceSnapshot = SourceSnapshot.builder()
+                .id(0L)
+                .sourceId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .originId(UUID.randomUUID())
+                .originType(SourceOriginType.MEDIA)
+                .strategy(new SourceStrategy() {
+                    @Override
+                    public ValidationResult validateMedia(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+
+                    @Override
+                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+
+                    @Override
+                    public ValidationResult validateAttachment(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+                })
+                .data(new HashMap<>())
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        // Update source with new values
+        source = Source.restore(sourceSnapshot);
+
+        // New strategy
+        SourceStrategy newStrategy = new SourceStrategy() {
+            @Override
+            public ValidationResult validateMedia(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public ValidationResult validateUser(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public ValidationResult validateAttachment(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+        };
+
+        // When updateData() method called
+        // Then update all values
+        source.updateData(requestData, newStrategy);
+
+        var updatedSnapshot = source.getSnapshot();
+
+        assertAll(
+                () -> assertEquals(newStrategy, updatedSnapshot.getStrategy(), "Strategy was not updated."),
+                () -> assertEquals(requestData, updatedSnapshot.getData(), "Data was not updated.")
+        );
+    }
+
+    @Test
+    @DisplayName("Update data with new values for attachment")
+    void updateData5() {
+        // Given source with origin artist, request data and new mocked strategy
+        HashMap<String, String> requestData = new HashMap<>() {{
+            put("test", "test2");
+        }};
+
+        sourceSnapshot = SourceSnapshot.builder()
+                .id(0L)
+                .sourceId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .originId(UUID.randomUUID())
+                .originType(SourceOriginType.ATTACHMENT)
+                .strategy(new SourceStrategy() {
+                    @Override
+                    public ValidationResult validateMedia(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+
+                    @Override
+                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+
+                    @Override
+                    public ValidationResult validateAttachment(final HashMap<String, String> data) {
+                        return ValidationResult.valid(data);
+                    }
+                })
+                .data(new HashMap<>())
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        // Update source with new values
+        source = Source.restore(sourceSnapshot);
+
+        // New strategy
+        SourceStrategy newStrategy = new SourceStrategy() {
+            @Override
+            public ValidationResult validateMedia(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public ValidationResult validateUser(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public ValidationResult validateAttachment(final HashMap<String, String> data) {
+                return ValidationResult.valid(requestData);
+            }
+        };
+
+        // When updateData() method called
+        // Then update all values
+        source.updateData(requestData, newStrategy);
+
+        var updatedSnapshot = source.getSnapshot();
+
+        assertAll(
+                () -> assertEquals(newStrategy, updatedSnapshot.getStrategy(), "Strategy was not updated."),
+                () -> assertEquals(requestData, updatedSnapshot.getData(), "Data was not updated.")
         );
     }
 

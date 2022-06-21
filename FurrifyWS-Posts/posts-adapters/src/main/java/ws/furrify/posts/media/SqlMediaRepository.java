@@ -24,6 +24,9 @@ interface SqlMediaRepository extends Repository<MediaSnapshot, Long> {
 
     @Query("select count(a) from MediaSnapshot a where a.ownerId = ?1")
     long countMediaByUserId(UUID userId);
+
+    Optional<MediaSnapshot> findByOwnerIdAndPostIdAndMd5(UUID ownerId, UUID postId, String md5);
+
 }
 
 @Transactional(rollbackFor = {})
@@ -57,6 +60,12 @@ class MediaRepositoryImpl implements MediaRepository {
     @Override
     public long countMediaByUserId(final UUID userId) {
         return sqlMediaRepository.countMediaByUserId(userId);
+    }
+
+    @Override
+    public Optional<Media> findByOwnerIdAndPostIdAndMd5(final UUID ownerId, final UUID postId, final String md5) {
+        return sqlMediaRepository.findByOwnerIdAndPostIdAndMd5(ownerId, postId, md5)
+                .map(Media::restore);
     }
 
     @Override

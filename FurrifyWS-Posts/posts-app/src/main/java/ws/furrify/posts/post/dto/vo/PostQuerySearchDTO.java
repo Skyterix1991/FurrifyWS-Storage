@@ -40,7 +40,7 @@ public class PostQuerySearchDTO implements Serializable {
     Set<String> withoutTags;
 
     public static PostQuerySearchDTO from(final String query) {
-        String[] queryParams = query.split("\\s+");
+        String[] queryParams = query.toLowerCase().split("\\s+");
 
         return new PostQuerySearchDTO(
                 // Title words

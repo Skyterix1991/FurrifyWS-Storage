@@ -2,8 +2,8 @@ package ws.furrify.sources.providers.deviantart;
 
 import feign.FeignException;
 import feign.Logger;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
 import io.github.resilience4j.feign.FeignDecorators;
@@ -35,8 +35,8 @@ public class DeviantArtServiceClientImpl implements DeviantArtServiceClient {
 
         this.deviantArtServiceClient = Resilience4jFeign.builder(decorators)
                 .client(new OkHttpClient())
-                .encoder(new GsonEncoder())
-                .decoder(new GsonDecoder())
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(DeviantArtServiceClient.class))
                 .logLevel(Logger.Level.FULL)
                 .target(DeviantArtServiceClient.class, "https://www.deviantart.com/api/v1/oauth2");

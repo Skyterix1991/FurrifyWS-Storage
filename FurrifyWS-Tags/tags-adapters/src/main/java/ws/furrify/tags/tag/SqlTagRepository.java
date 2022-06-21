@@ -18,6 +18,7 @@ interface SqlTagRepository extends Repository<TagSnapshot, Long> {
 
     boolean existsByOwnerIdAndValue(UUID ownerId, String value);
 
+    @Query("from TagSnapshot t where t.ownerId = ?1 and lower(t.value) = lower(?2)")
     Optional<TagSnapshot> findByOwnerIdAndValue(UUID ownerId, String value);
 
     void deleteByValue(String value);

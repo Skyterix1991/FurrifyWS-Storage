@@ -11,6 +11,7 @@ import ws.furrify.posts.media.dto.MediaDtoFactory;
 import ws.furrify.posts.media.strategy.MediaUploadStrategy;
 import ws.furrify.posts.post.dto.PostServiceClient;
 import ws.furrify.posts.post.dto.query.PostDetailsDTO;
+import ws.furrify.shared.exception.RecordAlreadyExistsException;
 import ws.furrify.shared.exception.RecordNotFoundException;
 import ws.furrify.shared.kafka.DomainEventPublisher;
 
@@ -73,7 +74,7 @@ class MediaFacadeTest {
         var eventPublisher = (DomainEventPublisher<MediaEvent>) mock(DomainEventPublisher.class);
 
         mediaFacade = new MediaFacade(
-                new CreateMediaImpl(postServiceClient, mediaFactory, mediaUploadStrategy, eventPublisher),
+                new CreateMediaImpl(postServiceClient, mediaRepository, mediaFactory, mediaUploadStrategy, eventPublisher),
                 new DeleteMediaImpl(eventPublisher, mediaRepository),
                 new UpdateMediaImpl(eventPublisher, mediaRepository),
                 new ReplaceMediaImpl(eventPublisher, mediaRepository),
@@ -135,6 +136,7 @@ class MediaFacadeTest {
         };
         // When createMedia() method called
         when(postServiceClient.getUserPost(any(), any())).thenReturn(postDetailsDTO);
+        when(mediaRepository.findByOwnerIdAndPostIdAndMd5(any(), any(), any())).thenReturn(Optional.empty());
         when(mediaUploadStrategy.uploadMediaWithGeneratedThumbnail(any(), any(), any())).thenReturn(new MediaUploadStrategy.UploadedMediaFile(
                 new URI("/test"),
                 new URI("/test")
@@ -238,12 +240,12 @@ class MediaFacadeTest {
             }
 
             @Override
-            public byte[] getBytes() throws IOException {
+            public byte[] getBytes() {
                 return new byte[0];
             }
 
             @Override
-            public InputStream getInputStream() throws IOException {
+            public InputStream getInputStream() {
                 return getClass().getClassLoader().getResourceAsStream("example.png");
             }
 
@@ -279,7 +281,7 @@ class MediaFacadeTest {
             }
 
             @Override
-            public byte[] getBytes() throws IOException {
+            public byte[] getBytes() {
                 return new byte[0];
             }
 
@@ -295,12 +297,75 @@ class MediaFacadeTest {
         };
         // When createMedia() method called
         when(postServiceClient.getUserPost(any(), any())).thenReturn(postDetailsDTO);
+        when(mediaRepository.findByOwnerIdAndPostIdAndMd5(any(), any(), any())).thenReturn(Optional.empty());
         when(mediaUploadStrategy.uploadMedia(any(), any(), any(), any())).thenReturn(new MediaUploadStrategy.UploadedMediaFile(
                 new URI("/test"),
                 new URI("/test")
         ));
         // Then return generated uuid
         assertNotNull(mediaFacade.createMedia(userId, postId, mediaDTO, mediaFile, thumbnailFile), "MediaId was not returned.");
+    }
+
+    @Test
+    @DisplayName("Create media with md5 duplicate in post")
+    void createMedia4() {
+        // Given ownerId, mediaDTO and multipart file
+        UUID userId = UUID.randomUUID();
+        UUID postId = UUID.randomUUID();
+
+        PostDetailsDTO postDetailsDTO = new PostDetailsDTO(null, null, null, null, null, null, null, null, null);
+
+        MultipartFile mediaFile = new MultipartFile() {
+            @Override
+            public String getName() {
+                return "test";
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return "test.png";
+            }
+
+            @Override
+            public String getContentType() {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBytes() throws IOException {
+                return new byte[0];
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return getClass().getClassLoader().getResourceAsStream("example.png");
+            }
+
+            @Override
+            public void transferTo(final File file) throws IOException, IllegalStateException {
+
+            }
+        };
+
+        // When createMedia() method called
+        when(postServiceClient.getUserPost(any(), any())).thenReturn(postDetailsDTO);
+        when(mediaRepository.findByOwnerIdAndPostIdAndMd5(any(), any(), any())).thenReturn(Optional.of(media));
+        // Then throw exception
+        assertThrows(
+                RecordAlreadyExistsException.class,
+                () -> mediaFacade.createMedia(userId, postId, mediaDTO, mediaFile, null),
+                "Exception was not thrown."
+        );
     }
 
     @Test

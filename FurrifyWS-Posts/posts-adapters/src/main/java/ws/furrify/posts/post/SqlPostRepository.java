@@ -68,12 +68,12 @@ interface SqlPostQueryRepositoryImpl extends PostQueryRepository, Repository<Pos
             // Artists
             "and (:#{#query.withArtists.size()} = 0 or p.id in (" +
             "select post.id from PostSnapshot post inner join post.artists artist " +
-            "where artist.preferredNickname in (:#{#query.withArtists}) " +
+            "where lower(artist.preferredNickname) in (:#{#query.withArtists}) " +
             "group by post.id " +
             "having count(distinct artist.preferredNickname) = :#{#query.withArtists.size() * 1L}" +
             ")) and (:#{#query.withoutArtists.size()} = 0 or p.id not in (" +
             "select post.id from PostSnapshot post inner join post.artists artist " +
-            "where artist.preferredNickname in (:#{#query.withoutArtists}) " +
+            "where lower(artist.preferredNickname) in (:#{#query.withoutArtists}) " +
             "group by post.id " +
             "having count(distinct artist.preferredNickname) = :#{#query.withoutArtists.size() * 1L}" +
             ")) " +

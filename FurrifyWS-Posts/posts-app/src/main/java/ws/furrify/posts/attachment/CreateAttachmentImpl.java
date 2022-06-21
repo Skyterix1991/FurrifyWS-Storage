@@ -11,17 +11,20 @@ import ws.furrify.shared.exception.Errors;
 import ws.furrify.shared.exception.FileContentIsCorruptedException;
 import ws.furrify.shared.exception.FileExtensionIsNotMatchingContentException;
 import ws.furrify.shared.exception.FilenameIsInvalidException;
+import ws.furrify.shared.exception.RecordAlreadyExistsException;
 import ws.furrify.shared.exception.RecordNotFoundException;
 import ws.furrify.shared.kafka.DomainEventPublisher;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 final class CreateAttachmentImpl implements CreateAttachment {
 
     private final PostServiceClient postService;
+    private final AttachmentRepository attachmentRepository;
     private final AttachmentFactory attachmentFactory;
     private final AttachmentUploadStrategy attachmentUploadStrategy;
     private final DomainEventPublisher<AttachmentEvent> domainEventPublisher;
@@ -62,6 +65,17 @@ final class CreateAttachmentImpl implements CreateAttachment {
             md5 = DigestUtils.md5Hex(attachmentFile.getInputStream());
         } catch (IOException e) {
             throw new FileContentIsCorruptedException(Errors.FILE_CONTENT_IS_CORRUPTED.getErrorMessage());
+        }
+
+        // Check if this post already contains attachment with md5 of file in this request
+        Optional<Attachment> duplicateAttachment = attachmentRepository.findByOwnerIdAndPostIdAndMd5(userId, postId, md5);
+        if (duplicateAttachment.isPresent()) {
+            AttachmentSnapshot duplicateAttachmentSnapshot = duplicateAttachment.get().getSnapshot();
+
+            throw new RecordAlreadyExistsException(Errors.FILE_HASH_DUPLICATE_IN_POST.getErrorMessage(
+                    md5,
+                    duplicateAttachmentSnapshot.getPostId()
+            ));
         }
 
         // Upload file and generate thumbnail

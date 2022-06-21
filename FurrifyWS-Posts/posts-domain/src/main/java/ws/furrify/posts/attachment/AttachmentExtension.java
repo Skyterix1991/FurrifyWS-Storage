@@ -77,6 +77,8 @@ public enum AttachmentExtension {
 
     private final static Pattern FILENAME_PATTERN = Pattern.compile("^[a-zA-Z0-9](?:[a-zA-Z0-9() ._-]*[a-zA-Z0-9() ._-])?\\.[a-zA-Z0-9_-]+$");
 
+    private final static short MAX_FILENAME_LENGTH = 255;
+
     AttachmentExtension(final String extension, final AttachmentType type, final String... mimeTypes) {
         this.extension = extension;
         this.mimeTypes = mimeTypes;
@@ -97,7 +99,7 @@ public enum AttachmentExtension {
     }
 
     public static boolean isFilenameValid(String filename) {
-        return !(filename == null || !FILENAME_PATTERN.matcher(filename).matches());
+        return filename != null && FILENAME_PATTERN.matcher(filename).matches() && filename.length() <= MAX_FILENAME_LENGTH;
     }
 
     /**

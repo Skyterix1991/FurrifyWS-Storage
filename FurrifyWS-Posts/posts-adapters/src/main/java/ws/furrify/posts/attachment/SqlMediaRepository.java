@@ -24,6 +24,8 @@ interface SqlAttachmentRepository extends Repository<AttachmentSnapshot, Long> {
 
     @Query("select count(a) from AttachmentSnapshot a where a.ownerId = ?1")
     long countAttachmentsByUserId(UUID userId);
+
+    Optional<AttachmentSnapshot> findByOwnerIdAndPostIdAndMd5(UUID ownerId, UUID postId, String md5);
 }
 
 @Transactional(rollbackFor = {})
@@ -57,6 +59,12 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
     @Override
     public long countAttachmentsByUserId(final UUID userId) {
         return sqlAttachmentRepository.countAttachmentsByUserId(userId);
+    }
+
+    @Override
+    public Optional<Attachment> findByOwnerIdAndPostIdAndMd5(final UUID ownerId, final UUID postId, final String md5) {
+        return sqlAttachmentRepository.findByOwnerIdAndPostIdAndMd5(ownerId, postId, md5)
+                .map(Attachment::restore);
     }
 
     @Override

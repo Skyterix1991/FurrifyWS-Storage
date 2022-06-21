@@ -45,7 +45,8 @@ public enum Errors {
     EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED("External provider [provider={0}] token has expired. You will need to reconnect it in account options."),
     HARD_LIMIT_FOR_ENTITY_TYPE("Hard limit of [limit={0}] has been reached for [entity={1}], further create requests will not be accepted."),
     UNIDENTIFIED("Unknown error occurred."),
-    EXTERNAL_PROVIDER_FORBIDDEN("You don't have permission to access that resource on external provider [provider={0}] endpoint.");
+    EXTERNAL_PROVIDER_FORBIDDEN("You don't have permission to access that resource on external provider [provider={0}] endpoint."),
+    FILE_HASH_DUPLICATE_IN_POST("File with this [md5={0}] hash already exists in this post with [uuid={1}].");
 
     private final String errorMessage;
 

@@ -42,11 +42,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static ws.furrify.sources.source.strategy.DeviantArtV1SourceStrategy.DEVIATION_ID_FIELD;
+import static ws.furrify.sources.source.strategy.DeviantArtV1SourceStrategy.DEVIATION_URL_FIELD;
+import static ws.furrify.sources.source.strategy.DeviantArtV1SourceStrategy.USER_ID_FIELD;
+import static ws.furrify.sources.source.strategy.DeviantArtV1SourceStrategy.USER_URL_FIELD;
+import static ws.furrify.sources.source.strategy.DeviantArtV1SourceStrategy.USER_USERNAME_FIELD;
 
 class DeviantArtV1SourceStrategyTest {
 
@@ -54,9 +62,6 @@ class DeviantArtV1SourceStrategyTest {
     private static DeviantArtServiceClient deviantArtServiceClient;
     private static DeviantArtScrapperClient deviantArtScrapperClient;
     private static ServletRequestAttributes servletRequestAttributes;
-
-    private final static String DEVIATION_ID_KEY = "deviation_id";
-
     private UUID deviationId;
     private UUID userId;
     private String deviationUrl;
@@ -460,7 +465,9 @@ class DeviantArtV1SourceStrategyTest {
             assertAll(() -> {
                 assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
                 // Check if id was added to data
-                assertFalse(validationResult.getData().get(DEVIATION_ID_KEY).isBlank(), "Validation failed with correct parameters.");
+                assertNotNull(validationResult.getData().get(DEVIATION_URL_FIELD), "Validation failed with correct parameters.");
+                assertNotNull(validationResult.getData().get(DEVIATION_ID_FIELD), "Validation failed with correct parameters.");
+                assertEquals(2, validationResult.getData().size(), "Validation result data contains too many parameters.");
             });
         }
     }
@@ -546,6 +553,35 @@ class DeviantArtV1SourceStrategyTest {
     }
 
     @Test
+    @DisplayName("Validate media and check if no extra params passed to hashmap after validation")
+    void validateMedia10() throws IOException {
+        // Given
+        data.put("url", deviationUrl);
+        data.put("test", "I shouldn't be passed.");
+        // When
+        var deviantArtResponse = new DeviantArtDeviationQueryDTO();
+        deviantArtResponse.setDeviationId(deviationId.toString());
+
+        when(deviantArtScrapperClient.scrapDeviationId(any())).thenReturn(deviationId.toString());
+        when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
+        when(deviantArtServiceClient.getDeviation(any(), any())).thenReturn(deviantArtResponse);
+
+        try (MockedStatic<RequestContextHolder> mock = Mockito.mockStatic(RequestContextHolder.class)) {
+            mock.when(RequestContextHolder::getRequestAttributes).thenReturn(servletRequestAttributes);
+
+            SourceStrategy.ValidationResult validationResult =
+                    deviantArtV1SourceStrategy.validateMedia(data);
+
+            // Then
+            assertAll(() -> {
+                assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+                // Check if id was added to data
+                assertNull(validationResult.getData().get("test"), "Extra parameter was not removed before validation result.");
+            });
+        }
+    }
+
+    @Test
     @DisplayName("Validate attachment")
     void validateAttachment() throws IOException {
         // Given
@@ -568,7 +604,9 @@ class DeviantArtV1SourceStrategyTest {
             assertAll(() -> {
                 assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
                 // Check if id was added to data
-                assertFalse(validationResult.getData().get(DEVIATION_ID_KEY).isBlank(), "Validation failed with correct parameters.");
+                assertNotNull(validationResult.getData().get(DEVIATION_URL_FIELD), "Validation failed with correct parameters.");
+                assertNotNull(validationResult.getData().get(DEVIATION_ID_FIELD), "Validation failed with correct parameters.");
+                assertEquals(2, validationResult.getData().size(), "Validation result data contains too many parameters.");
             });
         }
     }
@@ -653,6 +691,34 @@ class DeviantArtV1SourceStrategyTest {
         assertFalse(deviantArtV1SourceStrategy.validateAttachment(data).isValid(), "Validation accepted non existing url property.");
     }
 
+    @Test
+    @DisplayName("Validate attachment and check if no extra params passed to hashmap after validation")
+    void validateAttachment10() throws IOException {
+        // Given
+        data.put("url", deviationUrl);
+        data.put("test", "I shouldn't be passed.");
+        // When
+        var deviantArtResponse = new DeviantArtDeviationQueryDTO();
+        deviantArtResponse.setDeviationId(deviationId.toString());
+
+        when(deviantArtScrapperClient.scrapDeviationId(any())).thenReturn(deviationId.toString());
+        when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
+        when(deviantArtServiceClient.getDeviation(any(), any())).thenReturn(deviantArtResponse);
+
+        try (MockedStatic<RequestContextHolder> mock = Mockito.mockStatic(RequestContextHolder.class)) {
+            mock.when(RequestContextHolder::getRequestAttributes).thenReturn(servletRequestAttributes);
+
+            SourceStrategy.ValidationResult validationResult =
+                    deviantArtV1SourceStrategy.validateAttachment(data);
+
+            // Then
+            assertAll(() -> {
+                assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+                // Check if id was added to data
+                assertNull(validationResult.getData().get("test"), "Extra parameter was not removed before validation result.");
+            });
+        }
+    }
 
     @Test
     @DisplayName("Validate user")
@@ -667,8 +733,16 @@ class DeviantArtV1SourceStrategyTest {
 
         when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
         when(deviantArtServiceClient.getUser(any(), any())).thenReturn(deviantArtResponse);
+
+        SourceStrategy.ValidationResult validationResult = deviantArtV1SourceStrategy.validateUser(data);
         // Then
-        assertTrue(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation failed with correct parameters.");
+        assertAll(() -> {
+            assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+            assertNotNull(validationResult.getData().get(USER_URL_FIELD), "Validation failed with correct parameters.");
+            assertNotNull(validationResult.getData().get(USER_ID_FIELD), "Validation failed with correct parameters.");
+            assertNotNull(validationResult.getData().get(USER_USERNAME_FIELD), "Validation failed with correct parameters.");
+            assertEquals(3, validationResult.getData().size(), "Validation result data contains too many parameters.");
+        });
     }
 
     @Test
@@ -739,6 +813,30 @@ class DeviantArtV1SourceStrategyTest {
         // When
         // Then
         assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted non existing url property.");
+    }
+
+    @Test
+    @DisplayName("Validate user and check if no extra params passed to hashmap after validation")
+    void validateUser9() {
+        // Given
+        data.put("url", userUrl);
+        data.put("test", "I shouldn't be passed.");
+        // When
+        var deviantArtResponse = new DeviantArtUserQueryDTO();
+        deviantArtResponse.setUser(
+                new DeviantArtUserQueryDTO.User(userId.toString(), username)
+        );
+
+        when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
+        when(deviantArtServiceClient.getUser(any(), any())).thenReturn(deviantArtResponse);
+
+        SourceStrategy.ValidationResult validationResult = deviantArtV1SourceStrategy.validateUser(data);
+
+        // Then
+        assertAll(() -> {
+            assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+            assertNull(validationResult.getData().get("test"), "Extra parameter was not removed before validation result.");
+        });
     }
 
 }

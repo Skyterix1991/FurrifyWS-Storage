@@ -24,7 +24,7 @@ class MediaConfig {
         var mediaDtoFactory = new MediaDtoFactory(mediaQueryRepository);
 
         return new MediaFacade(
-                new CreateMediaImpl(postServiceClient, mediaFactory, mediaUploadStrategy(), eventPublisher),
+                new CreateMediaImpl(postServiceClient, mediaRepository, mediaFactory, mediaUploadStrategy(), eventPublisher),
                 new DeleteMediaImpl(eventPublisher, mediaRepository),
                 new UpdateMediaImpl(eventPublisher, mediaRepository),
                 new ReplaceMediaImpl(eventPublisher, mediaRepository),

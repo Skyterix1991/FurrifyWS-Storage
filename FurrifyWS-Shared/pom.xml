@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot</artifactId>
-            <version>2.6.5</version>
+            <version>2.7.0</version>
             <scope>compile</scope>
         </dependency>
         <!-- Schema -->
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.13.2</version>
+            <version>2.13.3</version>
         </dependency>
         <!-- Validation -->
         <dependency>
@@ -64,19 +64,19 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>5.3.17</version>
+            <version>5.3.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>5.3.17</version>
+            <version>5.3.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
-            <version>2.6.3</version>
+            <version>2.7.0</version>
             <scope>compile</scope>
         </dependency>
         <!-- Communication -->
@@ -90,26 +90,32 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>5.6.2</version>
+            <version>5.7.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>16.1.1</version>
+            <version>18.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>5.7.1</version>
             <scope>compile</scope>
         </dependency>
         <!-- JPA -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>5.3.17</version>
+            <version>5.3.21</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.6.7.Final</version>
+            <version>5.6.9.Final</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

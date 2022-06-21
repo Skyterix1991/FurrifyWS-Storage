@@ -2,8 +2,8 @@ package ws.furrify.sources.keycloak;
 
 import feign.FeignException;
 import feign.Logger;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
 import io.github.resilience4j.feign.FeignDecorators;
@@ -37,8 +37,8 @@ public class KeycloakServiceClientImpl implements KeycloakServiceClient {
 
         this.keycloakServiceClient = Resilience4jFeign.builder(decorators)
                 .client(new OkHttpClient())
-                .encoder(new GsonEncoder())
-                .decoder(new GsonDecoder())
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(KeycloakServiceClient.class))
                 .logLevel(Logger.Level.FULL)
                 .target(KeycloakServiceClient.class, PropertyHolder.AUTH_SERVER);

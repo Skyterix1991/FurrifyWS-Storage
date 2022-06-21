@@ -43,7 +43,7 @@ class AvatarTest implements CommandLineRunner {
                                 .ownerId(userId)
                                 .extension(AvatarExtension.EXTENSION_PNG)
                                 .filename("test.png")
-                                .fileUri(new URI("/artist/9551e7e0-4550-41b9-8c4a-57943642fa00/avatar/4d482df8-7380-4164-96ef-58f3796d8f27/image.png"))
+                                .fileUri(new URI("/artist/9551e7e0-4550-41b9-8c4a-57943642fa00/avatar/4d482df8-7380-4164-96ef-58f3796d8f27/image.jpg"))
                                 .thumbnailUri(new URI("/artist/9551e7e0-4550-41b9-8c4a-57943642fa00/avatar/4d482df8-7380-4164-96ef-58f3796d8f27/thumbnail_image.jpg"))
                                 .md5("3c518eeb674c71b30297f072fde7eba5")
                                 .createDate(ZonedDateTime.now())

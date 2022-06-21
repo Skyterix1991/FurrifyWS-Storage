@@ -24,7 +24,7 @@ class AttachmentConfig {
         var attachmentDtoFactory = new AttachmentDtoFactory(attachmentQueryRepository);
 
         return new AttachmentFacade(
-                new CreateAttachmentImpl(postServiceClient, attachmentFactory, attachmentUploadStrategy(), eventPublisher),
+                new CreateAttachmentImpl(postServiceClient, attachmentRepository, attachmentFactory, attachmentUploadStrategy(), eventPublisher),
                 new DeleteAttachmentImpl(eventPublisher, attachmentRepository),
                 attachmentRepository,
                 attachmentFactory,

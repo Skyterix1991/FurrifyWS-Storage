@@ -18,6 +18,7 @@ interface SqlArtistRepository extends Repository<ArtistSnapshot, Long> {
 
     void deleteByArtistId(UUID artistId);
 
+    @Query("select new java.lang.Boolean(count(a) > 0) from ArtistSnapshot a where a.ownerId = ?1 and lower(a.preferredNickname) = lower(?2)")
     boolean existsByOwnerIdAndPreferredNickname(UUID ownerId, String preferredNickname);
 
     boolean existsByOwnerIdAndArtistId(UUID ownerId, UUID artistId);
@@ -35,11 +36,11 @@ interface SqlArtistQueryRepositoryImpl extends ArtistQueryRepository, Repository
     Optional<ArtistDetailsQueryDTO> findByOwnerIdAndArtistId(UUID ownerId, UUID artistId);
 
     @Override
-    @Query("select artist from ArtistSnapshot artist where artist.ownerId = ?1 and (?2 is null or artist.preferredNickname = ?2)")
+    @Query("select artist from ArtistSnapshot artist where artist.ownerId = ?1 and (?2 is null or lower(artist.preferredNickname) = lower(?2))")
     Page<ArtistDetailsQueryDTO> findAllByOwnerIdAndOptionalPreferredNickname(UUID ownerId, String preferredNickname, Pageable pageable);
 
     @Override
-    @Query("select artist from ArtistSnapshot artist where artist.ownerId = ?1 and (?2 is null or artist.preferredNickname like %?2%)")
+    @Query("select artist from ArtistSnapshot artist where artist.ownerId = ?1 and (?2 is null or lower(artist.preferredNickname) like lower(concat('%',?2,'%')))")
     Page<ArtistDetailsQueryDTO> findAllByOwnerIdAndPreferredNicknameLike(UUID ownerId, String preferredNickname, Pageable pageable);
 
     @Override

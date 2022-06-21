@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PatreonV1SourceStrategyTest {
@@ -21,12 +23,47 @@ class PatreonV1SourceStrategyTest {
     }
 
     @Test
-    @DisplayName("Validate")
-    void validate() {
+    @DisplayName("Validate media")
+    void validateMedia() {
         // Given
         PatreonV1SourceStrategy patreonV1SourceStrategy = new PatreonV1SourceStrategy();
         // When
         // Then
-        assertTrue(patreonV1SourceStrategy.validateMedia(data).isValid(), "Validation failed with correct parameters.");
+        SourceStrategy.ValidationResult validationResult = patreonV1SourceStrategy.validateMedia(data);
+
+        assertAll(() -> {
+            assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+            assertEquals(0, validationResult.getData().size(), "Validation result data contains too many parameters.");
+        });
+    }
+
+    @Test
+    @DisplayName("Validate attachment")
+    void validateAttachment() {
+        // Given
+        PatreonV1SourceStrategy patreonV1SourceStrategy = new PatreonV1SourceStrategy();
+        // When
+        // Then
+        SourceStrategy.ValidationResult validationResult = patreonV1SourceStrategy.validateMedia(data);
+
+        assertAll(() -> {
+            assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+            assertEquals(0, validationResult.getData().size(), "Validation result data contains too many parameters.");
+        });
+    }
+
+    @Test
+    @DisplayName("Validate attachment")
+    void validateUser() {
+        // Given
+        PatreonV1SourceStrategy patreonV1SourceStrategy = new PatreonV1SourceStrategy();
+        // When
+        // Then
+        SourceStrategy.ValidationResult validationResult = patreonV1SourceStrategy.validateMedia(data);
+
+        assertAll(() -> {
+            assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
+            assertEquals(0, validationResult.getData().size(), "Validation result data contains too many parameters.");
+        });
     }
 }

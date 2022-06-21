@@ -1,6 +1,6 @@
 package ws.furrify.sources.keycloak.dto;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -13,36 +13,36 @@ public class KeycloakIdpTokenQueryDTO {
     /**
      * Identity provider access token.
      */
-    @SerializedName("access_token")
+    @JsonProperty("access_token")
     private String accessToken;
 
     /**
      * Token type ex. Bearer.
      */
-    @SerializedName("token_type")
+    @JsonProperty("token_type")
     private String tokenType;
 
     /**
      * Expire time in seconds.
      */
-    @SerializedName("expires_in")
+    @JsonProperty("expires_in")
     private Integer expiresIn;
 
     /**
      * Refresh token.
      */
-    @SerializedName("refresh_token")
+    @JsonProperty("refresh_token")
     private String refreshToken;
 
     /**
      * Scopes in the token.
      */
-    @SerializedName("scope")
+    @JsonProperty("scope")
     private String scope;
 
     /**
      * Has it succeeded? ex. success
      */
-    @SerializedName("status")
+    @JsonProperty("status")
     private String status;
 }

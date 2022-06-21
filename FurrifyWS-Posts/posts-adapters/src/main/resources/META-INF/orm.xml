@@ -212,7 +212,7 @@
     <embeddable class="ws.furrify.posts.post.vo.PostTag" access="FIELD">
         <attributes>
             <basic name="value">
-                <column nullable="false"/>
+                <column name="tag_value" nullable="false"/>
             </basic>
             <basic name="type">
                 <column nullable="false"/>

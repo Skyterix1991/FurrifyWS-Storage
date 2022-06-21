@@ -48,8 +48,9 @@ class SourceTest implements CommandLineRunner {
                         .ownerId(userId)
                         .strategy(new DeviantArtV1SourceStrategy())
                         .data(new HashMap<>(2) {{
-                            put("url", "https://www.deviantart.com/freak-side/art/C-h-i-l-l-i-n-911198824");
-                            put("deviation_id", "EC0AAF26-D129-8165-7E5A-1B3E0B2BBF82");
+                            put("url", "https://www.deviantart.com/freak-side");
+                            put("user_id", "EC0AAF26-D129-8165-7E5A-1B3E0B2BBF82");
+                            put("username", "freak-side");
                         }})
                         .originType(SourceOriginType.ARTIST)
                         .createDate(ZonedDateTime.now())

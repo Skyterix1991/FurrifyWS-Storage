@@ -38,6 +38,7 @@ class PostTest implements CommandLineRunner {
 
         var userId = UUID.fromString("4b255497-0200-4ee1-8922-892233173c10");
         var postId = UUID.fromString("7c2c35f3-20e9-4b7e-a455-253b7b78e2fa");
+        var attachmentId = UUID.fromString("566548cf-fb1d-4552-a880-c741a1eb9d0e");
 
         sqlPostRepository.save(
                 postFactory.from(
@@ -68,11 +69,11 @@ class PostTest implements CommandLineRunner {
                                 .attachments(Set.of(
                                         PostAttachment.builder()
                                                 .attachmentId(
-                                                        UUID.fromString("14925445-f5dc-43b9-a1a0-230cb0f10e51")
+                                                        attachmentId
                                                 )
                                                 .filename("test.psd")
                                                 .extension("PSD")
-                                                .fileUri(new URI("/attachment/14925445-f5dc-43b9-a1a0-230cb0f10e51/furrify-horizontal.png"))
+                                                .fileUri(new URI("/attachment/566548cf-fb1d-4552-a880-c741a1eb9d0e/furrify-horizontal.png"))
                                                 .build()
                                 ))
                                 .mediaSet(Set.of(

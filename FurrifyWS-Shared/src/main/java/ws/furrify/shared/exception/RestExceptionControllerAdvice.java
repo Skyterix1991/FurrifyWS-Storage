@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.lang.NonNull;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -109,6 +110,11 @@ public class RestExceptionControllerAdvice extends ResponseEntityExceptionHandle
 
     @ExceptionHandler(java.lang.IllegalArgumentException.class)
     protected ResponseEntity<Object> handleIllegalArgumentException(java.lang.IllegalArgumentException exception) {
+        return responseEntity(new ApiError(BAD_REQUEST, exception));
+    }
+
+    @ExceptionHandler(RequestRejectedException.class)
+    protected ResponseEntity<Object> handleRequestRejectedException(RequestRejectedException exception) {
         return responseEntity(new ApiError(BAD_REQUEST, exception));
     }
 

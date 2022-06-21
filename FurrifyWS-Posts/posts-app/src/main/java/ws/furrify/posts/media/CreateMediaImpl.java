@@ -11,17 +11,20 @@ import ws.furrify.shared.exception.Errors;
 import ws.furrify.shared.exception.FileContentIsCorruptedException;
 import ws.furrify.shared.exception.FileExtensionIsNotMatchingContentException;
 import ws.furrify.shared.exception.FilenameIsInvalidException;
+import ws.furrify.shared.exception.RecordAlreadyExistsException;
 import ws.furrify.shared.exception.RecordNotFoundException;
 import ws.furrify.shared.kafka.DomainEventPublisher;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 final class CreateMediaImpl implements CreateMedia {
 
     private final PostServiceClient postService;
+    private final MediaRepository mediaRepository;
     private final MediaFactory mediaFactory;
     private final MediaUploadStrategy mediaUploadStrategy;
     private final DomainEventPublisher<MediaEvent> domainEventPublisher;
@@ -63,6 +66,17 @@ final class CreateMediaImpl implements CreateMedia {
             md5 = DigestUtils.md5Hex(mediaFile.getInputStream());
         } catch (IOException e) {
             throw new FileContentIsCorruptedException(Errors.FILE_CONTENT_IS_CORRUPTED.getErrorMessage());
+        }
+
+        // Check if this post already contains media with md5 of file in this request
+        Optional<Media> duplicateMedia = mediaRepository.findByOwnerIdAndPostIdAndMd5(userId, postId, md5);
+        if (duplicateMedia.isPresent()) {
+            MediaSnapshot duplicateMediaSnapshot = duplicateMedia.get().getSnapshot();
+
+            throw new RecordAlreadyExistsException(Errors.FILE_HASH_DUPLICATE_IN_POST.getErrorMessage(
+                    md5,
+                    duplicateMediaSnapshot.getPostId()
+            ));
         }
 
         MediaUploadStrategy.UploadedMediaFile uploadedMediaFile;
