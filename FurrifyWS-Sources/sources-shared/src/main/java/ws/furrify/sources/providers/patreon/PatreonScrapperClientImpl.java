@@ -1,12 +1,14 @@
 package ws.furrify.sources.providers.patreon;
 
+import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ws.furrify.shared.exception.HttpStatus;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Implementation of Patreon scrapper client using JSoup.
@@ -15,19 +17,16 @@ import java.util.Arrays;
  */
 public class PatreonScrapperClientImpl implements PatreonScrapperClient {
 
+    private final static String POST_URL_BASE = "https://www.patreon.com/api/posts/";
+
     private final static String CAMPAIGN_IMAGE_PROPERTY = "og:image";
     private final static String CAMPAIGN_IN_IMAGE_URL = "campaign";
 
     @Override
     public int getCampaignId(final String url) throws IOException {
-        Document document = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0")
-                .header("Accept", "text/html")
-                .header("Accept-Encoding", "gzip,deflate")
-                .header("Accept-Language", "it-IT,en;q=0.8,en-US;q=0.6,de;q=0.4,it;q=0.2,es;q=0.2")
-                .header("Connection", "keep-alive")
-                .ignoreContentType(true)
-                .get();
+        Document document = addParamsToJsoupConnection(
+                Jsoup.connect(url)
+        ).get();
 
         Elements metaTags = document.head().getElementsByTag("meta");
 
@@ -54,14 +53,38 @@ public class PatreonScrapperClientImpl implements PatreonScrapperClient {
                 }
 
                 return Integer.parseInt(imageUrl[campaignIdPositionInUrl]);
-            } else {
-                throw new IOException("Campaign not found.");
             }
-
         }
 
         // If meta tag not found
         throw new IOException("Campaign not found.");
+    }
+
+
+    @Override
+    public boolean existsPost(final int postId) throws IOException {
+        try {
+            addParamsToJsoupConnection(
+                    Jsoup.connect(POST_URL_BASE + postId)
+            ).get();
+
+            // Connection successful
+            return true;
+
+        } catch (HttpStatusException e) {
+            // If post not found
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND.getStatus()) {
+                return false;
+            }
+
+            throw new IOException("Unhandled http error has occurred.");
+        }
+    }
+
+    private Connection addParamsToJsoupConnection(Connection connection) {
+        return connection
+                .header("Accept", "*/*")
+                .ignoreContentType(true);
     }
 
 }

@@ -1,12 +1,7 @@
 package ws.furrify.sources.source.strategy;
 
-import ws.furrify.sources.keycloak.KeycloakServiceClient;
-import ws.furrify.sources.keycloak.KeycloakServiceClientImpl;
 import ws.furrify.sources.providers.patreon.PatreonScrapperClient;
 import ws.furrify.sources.providers.patreon.PatreonScrapperClientImpl;
-import ws.furrify.sources.providers.patreon.PatreonServiceClient;
-import ws.furrify.sources.providers.patreon.PatreonServiceClientImpl;
-import ws.furrify.sources.providers.patreon.dto.PatreonCampaignQueryDTO;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,49 +16,43 @@ import java.util.HashMap;
  */
 public class PatreonV1SourceStrategy implements SourceStrategy {
 
-    private final static String BROKER_ID = "patreon";
     private final static String DOMAIN = "patreon.com";
     private final static String WWW_SUBDOMAIN = "www.";
     private final static String POST_URL_FIELD = "url";
     private final static String CAMPAIGN_URL_FIELD = "url";
 
     private final static String POST_PATH = "posts";
+    private final static String CAMPAIGN_USER_PATH = "/user/?u=";
+
+    private final static String CAMPAIGN_ID_FIELD = "campaign_id";
+    private final static String POST_ID_FIELD = "post_id";
+
     private final static byte POSTS_PATH_POSITION_IN_URI = 1;
     private final static byte POST_ID_PATH_POSITION_IN_URI = 2;
-    private final static byte CAMPAIGN_NAME_PATH_POSITION_IN_URI = 1;
 
     private final static byte POST_PATH_SEGMENTS = 3;
-    private final static byte CAMPAIGN_PATH_SEGMENTS = 2;
+    private final static byte CAMPAIGN_USERNAME_PATH_SEGMENTS = 2;
 
-    private final KeycloakServiceClient keycloakService;
-    private final PatreonServiceClient patreonService;
     private final PatreonScrapperClient patreonScrapperClient;
 
     public PatreonV1SourceStrategy() {
-        this.keycloakService = new KeycloakServiceClientImpl();
-        this.patreonService = new PatreonServiceClientImpl();
-        this.patreonScrapperClient = new PatreonScrapperClientImpl();
-    }
-
-    public PatreonV1SourceStrategy(final KeycloakServiceClient keycloakService,
-                                      final PatreonServiceClient patreonService) {
-        this.keycloakService = keycloakService;
-        this.patreonService = patreonService;
         this.patreonScrapperClient = new PatreonScrapperClientImpl();
     }
 
     @Override
-    public ValidationResult validateMedia(final HashMap<String, String> data) {
-        if (data.get(POST_URL_FIELD) == null || data.get(POST_URL_FIELD).isBlank()) {
+    public ValidationResult validateMedia(final HashMap<String, String> requestData) {
+
+        if (requestData.get(POST_URL_FIELD) == null || requestData.get(POST_URL_FIELD).isBlank()) {
             return ValidationResult.invalid("Post url is required.");
         }
 
         URI uri;
 
+        // Check if URL is valid
         try {
-            uri = new URI(data.get(POST_URL_FIELD));
+            uri = new URI(requestData.get(POST_URL_FIELD));
             if (uri.getHost() == null) {
-                throw new URISyntaxException(data.get(POST_URL_FIELD), "Domain is missing.");
+                throw new URISyntaxException(requestData.get(POST_URL_FIELD), "Domain is missing.");
             }
         } catch (URISyntaxException e) {
             return ValidationResult.invalid("Post url is invalid.");
@@ -76,44 +65,53 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
 
         String[] path = uri.getPath().split("[/\\\\]");
         // If there are not enough path params in url or post path is not present
-        if (path.length < POST_PATH_SEGMENTS ||
-                !path[POSTS_PATH_POSITION_IN_URI].equals(POST_PATH)) {
+        if (path.length < POST_PATH_SEGMENTS || !path[POSTS_PATH_POSITION_IN_URI].equals(POST_PATH)) {
             return ValidationResult.invalid("Post url is invalid.");
         }
 
         // Extract post id from path
         String postIdRaw = path[POST_ID_PATH_POSITION_IN_URI];
-        // Sanitize the id (patreon does this thing that adds letters to id for whatever purpose)
-        int postId = Integer.parseInt(postIdRaw.replaceAll("[^0-9.]", ""));
 
-        // TODO Uncomment when patreon api updated to support post public information fetch
-        // Get post from patreon api
-/*        PatreonPostQueryDTO postQueryDTO = patreonService.getPost(
-                SourceStrategy.getKeycloakBearerToken(keycloakService, BROKER_ID),
-                postId
-        );
-        if (postQueryDTO == null) {
-            return ValidationResult.invalid("Post was not found.");
-        }*/
+        int postId;
+
+        // Sanitize the id (patreon does this thing that adds letters to id for whatever purpose)
+        try {
+            postId = Integer.parseInt(postIdRaw.replaceAll("[^0-9.]", ""));
+        } catch (NumberFormatException e) {
+            return ValidationResult.invalid("Post url is invalid.");
+        }
+
+
+        try {
+            // If post with that id doesn't exist
+            if (!patreonScrapperClient.existsPost(postId)) {
+                return ValidationResult.invalid("Post doesn't exist.");
+            }
+        } catch (IOException e) {
+            return ValidationResult.invalid("Unknown error has occurred while communicating with patreon.");
+        }
 
         // Save post id to data
-        data.put("postId", Integer.toString(postId));
+        HashMap<String, String> data = new HashMap<>(1);
+        data.put(POST_ID_FIELD, Integer.toString(postId));
 
         return ValidationResult.valid(data);
     }
 
     @Override
-    public ValidationResult validateUser(final HashMap<String, String> data) {
-        if (data.get(CAMPAIGN_URL_FIELD) == null || data.get(CAMPAIGN_URL_FIELD).isBlank()) {
+    public ValidationResult validateUser(final HashMap<String, String> requestData) {
+
+        if (requestData.get(CAMPAIGN_URL_FIELD) == null || requestData.get(CAMPAIGN_URL_FIELD).isBlank()) {
             return ValidationResult.invalid("Campaign url is required.");
         }
 
         URI uri;
 
+        // Check if URL is valid
         try {
-            uri = new URI(data.get(CAMPAIGN_URL_FIELD));
+            uri = new URI(requestData.get(CAMPAIGN_URL_FIELD));
             if (uri.getHost() == null) {
-                throw new URISyntaxException(data.get(CAMPAIGN_URL_FIELD), "Domain is missing.");
+                throw new URISyntaxException(requestData.get(CAMPAIGN_URL_FIELD), "Domain is missing.");
             }
         } catch (URISyntaxException e) {
             return ValidationResult.invalid("Campaign url is invalid.");
@@ -124,32 +122,51 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
             return ValidationResult.invalid("Campaign url is invalid.");
         }
 
-        String[] path = uri.getPath().split("[/\\\\]");
-        // If there are not enough path params in url
-        if (path.length < CAMPAIGN_PATH_SEGMENTS) {
-            return ValidationResult.invalid("Campaign url is invalid.");
-        }
-
+        // Extracted campaignId
         int campaignId;
 
-        try {
-            // TODO There is no cleaner way for now to get correct id from weird links that work
-            campaignId = patreonScrapperClient.getCampaignId(data.get(CAMPAIGN_URL_FIELD));
-        } catch (IOException e) {
-            return ValidationResult.invalid("Campaign url is invalid.");
-        }
+        // If matches /user?u=number_here pattern
+        if (uri.getPath().contains(CAMPAIGN_USER_PATH)) {
+            int idQueryParamIndex = uri.getPath().indexOf("?u=");
 
-        // Get campaign from patreon api
-        PatreonCampaignQueryDTO campaignQueryDTO = patreonService.getCampaign(
-                SourceStrategy.getKeycloakBearerToken(keycloakService, BROKER_ID),
-                campaignId
-        );
-        if (campaignQueryDTO == null) {
-            return ValidationResult.invalid("Campaign was not found.");
+            // Cut url to start position of query param id index
+            String tmpCampaignId = uri.getPath().substring(idQueryParamIndex);
+
+            // Check if another query param is present in url
+            int idQueryParamEndIndex = tmpCampaignId.indexOf("&");
+            if (idQueryParamEndIndex != -1) {
+                // Remove all following params and "&" symbol
+                tmpCampaignId = tmpCampaignId.substring(0, idQueryParamEndIndex - 1);
+            }
+
+            // Convert tmp id form url to campaign id int
+            try {
+                campaignId = Integer.parseInt(tmpCampaignId);
+            } catch (NumberFormatException e) {
+                return ValidationResult.invalid("Campaign url is invalid.");
+            }
+
+            // If matches /username_here pattern
+        } else {
+            String[] path = uri.getPath().split("[/\\\\]");
+
+            // Check if slash is present between domain and username ex. patreon.com/username
+            if (path.length < CAMPAIGN_USERNAME_PATH_SEGMENTS) {
+                return ValidationResult.invalid("Campaign url is invalid.");
+            }
+
+            // Currently the only way to get campaign id from weird patreon url is scrapping it from their website...
+            try {
+                campaignId = patreonScrapperClient.getCampaignId(requestData.get(CAMPAIGN_URL_FIELD));
+            } catch (IOException e) {
+                return ValidationResult.invalid("Campaign url is invalid.");
+            }
+
         }
 
         // Save campaign id to data
-        data.put("campaignId", Integer.toString(campaignId));
+        HashMap<String, String> data = new HashMap<>(1);
+        data.put(CAMPAIGN_ID_FIELD, Integer.toString(campaignId));
 
         return ValidationResult.valid(data);
     }
