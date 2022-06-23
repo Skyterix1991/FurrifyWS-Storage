@@ -101,7 +101,7 @@
       {
         "name": "data",
         "type": "ws.furrify.posts.avatar.vo.AvatarData",
-        "doc": "Avatar data eg. changed fields."
+        "doc": "Avatar data ex. changed fields."
       },
       {
         "name": "occurredOn",

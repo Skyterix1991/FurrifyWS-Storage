@@ -6,12 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.transaction.annotation.Transactional;
 import ws.furrify.sources.source.dto.query.SourceDetailsQueryDTO;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,6 +50,11 @@ interface SqlSourceQueryRepositoryImpl extends SourceQueryRepository, Repository
     @Override
     @Query("select s from SourceSnapshot s where s.ownerId = ?1 and s.postId = ?2  and s.originType = 'ATTACHMENT' and s.originId = ?3")
     Page<SourceDetailsQueryDTO> findAllByOwnerIdAndPostIdAndAttachmentId(UUID userId, UUID postId, UUID attachmentId, Pageable pageable);
+
+    @Override
+    @Query("select count(source) from SourceSnapshot source where source.ownerId = ?1 " +
+            "and source.originId = ?2")
+    Long countByOwnerIdAndOriginId(UUID ownerId, UUID originId);
 }
 
 @org.springframework.stereotype.Repository

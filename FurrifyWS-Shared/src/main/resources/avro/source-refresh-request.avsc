@@ -1,0 +1,68 @@
+[
+  {
+    "type": "record",
+    "namespace": "ws.furrify.sources.refreshrequest.vo",
+    "doc": "Refresh request data containing required information to perform state change across multiple microservices.",
+    "name": "RefreshRequestData",
+    "fields": [
+      {
+        "name": "ownerId",
+        "type": "string",
+        "doc": "Source owner UUID."
+      },
+      {
+        "name": "artistId",
+        "type": "string",
+        "doc": "Artist UUID."
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "doc": "Status enum."
+      },
+      {
+        "name": "createDate",
+        "type": [
+          "null",
+          {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }
+        ],
+        "default": null,
+        "doc": "Create timestamp."
+      }
+    ]
+  },
+  {
+    "type": "record",
+    "namespace": "ws.furrify.sources.refreshrequest",
+    "doc": "Content refresh request state change event.",
+    "name": "RefreshRequestEvent",
+    "fields": [
+      {
+        "name": "state",
+        "type": "string",
+        "doc": "A event type performed on that record. (Can be acquired using RefreshRequestEventType enum.)"
+      },
+      {
+        "name": "refreshRequestId",
+        "type": "string",
+        "doc": "A source UUID event is targeted at."
+      },
+      {
+        "name": "data",
+        "type": "ws.furrify.sources.refreshrequest.vo.RefreshRequestData",
+        "doc": "Refresh request data."
+      },
+      {
+        "name": "occurredOn",
+        "type": {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        },
+        "doc": "Instant event occurred on."
+      }
+    ]
+  }
+]

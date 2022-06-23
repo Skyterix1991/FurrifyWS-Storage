@@ -1,4 +1,4 @@
-package ws.furrify.sources.source;
+package ws.furrify.sources.feign;
 
 import feign.FeignException;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
@@ -16,16 +16,16 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-class ArtistServiceImpl implements ArtistServiceClient {
+public class ArtistServiceImpl implements ArtistServiceClient {
 
-    private final ArtistsServiceClientImpl attachmentServiceClient;
+    private final ArtistsServiceClientImpl artistsServiceClient;
 
     private final static String NAME = "artists";
 
     @Bulkhead(name = "getUserArtist", fallbackMethod = "getUserArtistFallback")
     @Override
     public ArtistDetailsQueryDTO getUserArtist(final UUID userId, final UUID artistId) {
-        return attachmentServiceClient.getUserArtist(userId, artistId);
+        return artistsServiceClient.getUserArtist(userId, artistId);
     }
 
     private ArtistDetailsQueryDTO getUserArtistFallback(Throwable throwable) {

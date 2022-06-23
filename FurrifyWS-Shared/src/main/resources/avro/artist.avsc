@@ -165,7 +165,7 @@
       {
         "name": "data",
         "type": "ws.furrify.artists.artist.vo.ArtistData",
-        "doc": "Artist data eg. changed fields."
+        "doc": "Artist data ex. changed fields."
       },
       {
         "name": "occurredOn",

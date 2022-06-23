@@ -30,6 +30,7 @@ public enum HttpStatus {
     CONFLICT(409),
     INTERNAL_SERVER_ERROR(500),
     NOT_IMPLEMENTED(502),
+    TOO_MANY_REQUESTS(429),
     SERVICE_UNAVAILABLE(503);
 
 
@@ -55,6 +56,7 @@ public enum HttpStatus {
             case 403 -> FORBIDDEN;
             case 404 -> NOT_FOUND;
             case 406 -> NOT_ACCEPTABLE;
+            case 429 -> TOO_MANY_REQUESTS;
             case 500 -> INTERNAL_SERVER_ERROR;
             case 502 -> NOT_IMPLEMENTED;
             case 503 -> SERVICE_UNAVAILABLE;

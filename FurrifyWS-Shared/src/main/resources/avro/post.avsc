@@ -144,7 +144,7 @@
       {
         "name": "data",
         "type": "ws.furrify.posts.post.vo.PostData",
-        "doc": "Post data eg. changed fields."
+        "doc": "Post data ex. changed fields."
       },
       {
         "name": "occurredOn",

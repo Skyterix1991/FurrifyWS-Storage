@@ -12,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import ws.furrify.shared.exception.Errors;
 import ws.furrify.shared.exception.ExternalProviderServerSideErrorException;
 import ws.furrify.shared.exception.ExternalProviderTokenExpiredException;
+import ws.furrify.shared.exception.ExternalProviderTooManyRequestsException;
 import ws.furrify.shared.exception.HttpStatus;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtDeviationQueryDTO;
+import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserDeviationsQueryDTO;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserQueryDTO;
 
 /**
@@ -52,6 +54,11 @@ public class DeviantArtServiceClientImpl implements DeviantArtServiceClient {
         return deviantArtServiceClient.getUser(bearerToken, username);
     }
 
+    @Override
+    public DeviantArtUserDeviationsQueryDTO getUserDeviations(final String bearerToken, final String username, final byte limit, final int offset) {
+        return deviantArtServiceClient.getUserDeviations(bearerToken, username, limit, offset);
+    }
+
     public static class DeviantArtServiceClientFallback implements DeviantArtServiceClient {
         private final Exception exception;
 
@@ -70,9 +77,14 @@ public class DeviantArtServiceClientImpl implements DeviantArtServiceClient {
                     return null;
                 }
 
-                case INTERNAL_SERVER_ERROR -> throw new ExternalProviderServerSideErrorException(Errors.EXTERNAL_PROVIDER_SERVER_SIDE_ERROR.getErrorMessage(ID));
+                case INTERNAL_SERVER_ERROR ->
+                        throw new ExternalProviderServerSideErrorException(Errors.EXTERNAL_PROVIDER_SERVER_SIDE_ERROR.getErrorMessage(ID));
 
-                case UNAUTHORIZED -> throw new ExternalProviderTokenExpiredException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
+                case UNAUTHORIZED ->
+                        throw new ExternalProviderTokenExpiredException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
+
+                case TOO_MANY_REQUESTS ->
+                        throw new ExternalProviderTooManyRequestsException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
 
                 default -> {
                     log.error("DeviantArt identity provider endpoint returned unhandled status " + status.getStatus() + ".");
@@ -93,9 +105,43 @@ public class DeviantArtServiceClientImpl implements DeviantArtServiceClient {
                     return null;
                 }
 
-                case INTERNAL_SERVER_ERROR -> throw new ExternalProviderServerSideErrorException(Errors.EXTERNAL_PROVIDER_SERVER_SIDE_ERROR.getErrorMessage(ID));
+                case INTERNAL_SERVER_ERROR ->
+                        throw new ExternalProviderServerSideErrorException(Errors.EXTERNAL_PROVIDER_SERVER_SIDE_ERROR.getErrorMessage(ID));
 
-                case UNAUTHORIZED -> throw new ExternalProviderTokenExpiredException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
+                case UNAUTHORIZED ->
+                        throw new ExternalProviderTokenExpiredException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
+
+                case TOO_MANY_REQUESTS ->
+                        throw new ExternalProviderTooManyRequestsException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
+
+                default -> {
+                    log.error("DeviantArt identity provider endpoint returned unhandled status " + status.getStatus() + ".");
+
+                    throw feignException;
+                }
+            }
+        }
+
+        @Override
+        public DeviantArtUserDeviationsQueryDTO getUserDeviations(final String bearerToken,
+                                                                  final String username,
+                                                                  final byte limit,
+                                                                  final int offset) throws ExternalProviderTokenExpiredException, ExternalProviderServerSideErrorException, ExternalProviderTooManyRequestsException, IllegalStateException {
+            var feignException = (FeignException) this.exception;
+
+            HttpStatus status = HttpStatus.of(feignException.status());
+
+            switch (status) {
+                case NOT_FOUND -> throw new IllegalStateException("DeviantArt source data username doesn't exist.");
+
+                case INTERNAL_SERVER_ERROR ->
+                        throw new ExternalProviderServerSideErrorException(Errors.EXTERNAL_PROVIDER_SERVER_SIDE_ERROR.getErrorMessage(ID));
+
+                case UNAUTHORIZED ->
+                        throw new ExternalProviderTokenExpiredException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
+
+                case TOO_MANY_REQUESTS ->
+                        throw new ExternalProviderTooManyRequestsException(Errors.EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED.getErrorMessage(ID));
 
                 default -> {
                     log.error("DeviantArt identity provider endpoint returned unhandled status " + status.getStatus() + ".");

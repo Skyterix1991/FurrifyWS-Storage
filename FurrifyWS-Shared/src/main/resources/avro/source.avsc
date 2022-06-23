@@ -95,7 +95,7 @@
       {
         "name": "data",
         "type": "ws.furrify.sources.source.vo.SourceData",
-        "doc": "Source data eg. changed fields."
+        "doc": "Source data ex. changed fields."
       },
       {
         "name": "occurredOn",

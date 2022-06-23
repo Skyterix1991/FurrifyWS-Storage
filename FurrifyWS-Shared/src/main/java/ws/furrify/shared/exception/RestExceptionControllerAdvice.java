@@ -162,7 +162,8 @@ public class RestExceptionControllerAdvice extends ResponseEntityExceptionHandle
             VideoFrameExtractionFailedException.class,
             ExternalProviderTokenExpiredException.class,
             ExternalProviderServerSideErrorException.class,
-            HardLimitForEntityTypeException.class
+            HardLimitForEntityTypeException.class,
+            NoArtistSourcesFoundForRefreshException.class
     })
     protected ResponseEntity<Object> handleException(
             RestException exception) {

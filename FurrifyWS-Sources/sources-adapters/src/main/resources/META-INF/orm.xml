@@ -39,4 +39,29 @@
             </element-collection>
         </attributes>
     </entity>
+
+    <entity class="ws.furrify.sources.refreshrequest.RefreshRequestSnapshot" access="FIELD">
+        <table name="refresh_requests"/>
+        <attributes>
+            <id name="id">
+                <generated-value strategy="SEQUENCE"/>
+            </id>
+            <basic name="refreshRequestId">
+                <column unique="true" updatable="false" nullable="false"/>
+            </basic>
+            <basic name="artistId">
+                <column updatable="false" nullable="false"/>
+            </basic>
+            <basic name="ownerId">
+                <column updatable="false" nullable="false"/>
+            </basic>
+            <basic name="status">
+                <column nullable="false"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <basic name="createDate">
+                <column updatable="false" nullable="false"/>
+            </basic>
+        </attributes>
+    </entity>
 </entity-mappings>

@@ -15,3 +15,4 @@ spring:
 furrify:
   limits:
     sources: ${FURRIFY_LIMITS_SOURCES:50000}
+    refresh-requests: ${FURRIFY_LIMITS_SOURCES:50000}

@@ -21,6 +21,7 @@ public interface DomainEventPublisher<T> {
          */
         ATTACHMENT("attachment_events"),
         SOURCE("source_events"),
+        REFRESH_REQUEST("refresh_request_events"),
         MEDIA("media_events"),
         POST("post_events"),
         ARTIST("artist_events"),
@@ -39,6 +40,14 @@ public interface DomainEventPublisher<T> {
         public String getTopicName() {
             return topicName;
         }
+    }
+
+    enum RefreshRequestEventType {
+        /**
+         * Events that can occur on RefreshRequest entity.
+         */
+        CREATED,
+        UPDATED
     }
 
     enum SourceEventType {

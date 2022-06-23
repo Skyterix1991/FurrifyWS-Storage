@@ -107,7 +107,7 @@
       {
         "name": "data",
         "type": "ws.furrify.posts.media.vo.MediaData",
-        "doc": "Media data eg. changed fields."
+        "doc": "Media data ex. changed fields."
       },
       {
         "name": "occurredOn",

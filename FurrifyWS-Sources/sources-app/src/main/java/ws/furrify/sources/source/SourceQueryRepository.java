@@ -22,4 +22,6 @@ public interface SourceQueryRepository {
     Page<SourceDetailsQueryDTO> findAllByOwnerIdAndPostIdAndMediaId(UUID userId, UUID postId, UUID mediaId, Pageable pageable);
 
     Page<SourceDetailsQueryDTO> findAllByOwnerIdAndPostIdAndAttachmentId(UUID userId, UUID postId, UUID attachmentId, Pageable pageable);
+
+    Long countByOwnerIdAndOriginId(UUID ownerId, UUID originId);
 }

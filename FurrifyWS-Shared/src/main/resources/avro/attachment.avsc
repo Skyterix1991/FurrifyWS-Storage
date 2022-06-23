@@ -110,7 +110,7 @@
       {
         "name": "data",
         "type": "ws.furrify.posts.attachment.vo.AttachmentData",
-        "doc": "Attachment data eg. changed fields."
+        "doc": "Attachment data ex. changed fields."
       },
       {
         "name": "occurredOn",

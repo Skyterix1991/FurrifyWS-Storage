@@ -3,6 +3,7 @@ package ws.furrify.sources.source;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ws.furrify.sources.feign.ArtistServiceImpl;
 import ws.furrify.sources.kafka.KafkaTopicEventPublisher;
 import ws.furrify.sources.source.converter.SourceStrategyAttributeConverter;
 import ws.furrify.sources.source.dto.SourceDtoFactory;

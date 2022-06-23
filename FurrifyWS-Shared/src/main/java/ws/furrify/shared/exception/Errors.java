@@ -43,9 +43,11 @@ public enum Errors {
     VIDEO_FRAME_EXTRACTION_FAILED("Video frame extraction for thumbnail has failed."),
     EXTERNAL_PROVIDER_SERVER_SIDE_ERROR("External provider [provider={0}] has encountered a server error on their side. Try again."),
     EXTERNAL_PROVIDER_TOKEN_HAS_EXPIRED("External provider [provider={0}] token has expired. You will need to reconnect it in account options."),
+    EXTERNAL_PROVIDER_TOO_MANY_REQUESTS("External provider [provider={0}] API is overloaded. Please try again later."),
     HARD_LIMIT_FOR_ENTITY_TYPE("Hard limit of [limit={0}] has been reached for [entity={1}], further create requests will not be accepted."),
     UNIDENTIFIED("Unknown error occurred."),
-    FILE_HASH_DUPLICATE_IN_POST("File with this [md5={0}] hash already exists in this post with [uuid={1}].");
+    FILE_HASH_DUPLICATE_IN_POST("File with this [md5={0}] hash already exists in this post with [uuid={1}]."),
+    NO_ARTIST_SOURCES_FOUND_FOR_REFRESH("Artist [uuid={0}] contains no sources to be refreshed.");
 
 
     private final String errorMessage;
