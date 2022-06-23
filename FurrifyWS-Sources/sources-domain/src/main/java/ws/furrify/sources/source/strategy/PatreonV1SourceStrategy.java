@@ -1,5 +1,7 @@
 package ws.furrify.sources.source.strategy;
 
+import lombok.NonNull;
+
 import java.util.HashMap;
 
 /**
@@ -11,21 +13,21 @@ import java.util.HashMap;
 public class PatreonV1SourceStrategy implements SourceStrategy {
 
     @Override
-    public ValidationResult validateMedia(final HashMap<String, String> data) {
+    public ValidationResult validateMedia(@NonNull final HashMap<String, String> data) {
         // TODO Implement me
 
         return ValidationResult.valid(new HashMap<>(0));
     }
 
     @Override
-    public ValidationResult validateUser(final HashMap<String, String> data) {
+    public ValidationResult validateArtist(@NonNull final HashMap<String, String> data) {
         // TODO Implement me
 
         return ValidationResult.valid(new HashMap<>(0));
     }
 
     @Override
-    public ValidationResult validateAttachment(final HashMap<String, String> data) {
+    public ValidationResult validateAttachment(@NonNull final HashMap<String, String> data) {
         // TODO Implement me
 
         return ValidationResult.valid(new HashMap<>(0));

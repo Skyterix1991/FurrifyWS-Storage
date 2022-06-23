@@ -734,7 +734,7 @@ class DeviantArtV1SourceStrategyTest {
         when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
         when(deviantArtServiceClient.getUser(any(), any())).thenReturn(deviantArtResponse);
 
-        SourceStrategy.ValidationResult validationResult = deviantArtV1SourceStrategy.validateUser(data);
+        SourceStrategy.ValidationResult validationResult = deviantArtV1SourceStrategy.validateArtist(data);
         // Then
         assertAll(() -> {
             assertTrue(validationResult.isValid(), "Validation failed with correct parameters.");
@@ -751,7 +751,7 @@ class DeviantArtV1SourceStrategyTest {
         // Given
         // When
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted empty url.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted empty url.");
     }
 
     @Test
@@ -762,7 +762,7 @@ class DeviantArtV1SourceStrategyTest {
         when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
         when(deviantArtServiceClient.getUser(any(), any())).thenReturn(null);
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted empty url.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted empty url.");
     }
 
     @Test
@@ -772,7 +772,7 @@ class DeviantArtV1SourceStrategyTest {
         data.put("url", "test");
         // When
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted invalid url property.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted invalid url property.");
     }
 
     @Test
@@ -782,7 +782,7 @@ class DeviantArtV1SourceStrategyTest {
         data.put("url", "https://de`vianta`rt.com");
         // When
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted invalid url given for uri object.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted invalid url given for uri object.");
     }
 
     @Test
@@ -792,7 +792,7 @@ class DeviantArtV1SourceStrategyTest {
         data.put("url", "test.pl");
         // When
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted not expected domain in url property.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted not expected domain in url property.");
     }
 
     @Test
@@ -802,7 +802,7 @@ class DeviantArtV1SourceStrategyTest {
         data.put("url", "https://deviantart.com/");
         // When
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted missing art id in url property.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted missing art id in url property.");
     }
 
     @Test
@@ -812,7 +812,7 @@ class DeviantArtV1SourceStrategyTest {
         data.put("url", "https://deviantart.com/test");
         // When
         // Then
-        assertFalse(deviantArtV1SourceStrategy.validateUser(data).isValid(), "Validation accepted non existing url property.");
+        assertFalse(deviantArtV1SourceStrategy.validateArtist(data).isValid(), "Validation accepted non existing url property.");
     }
 
     @Test
@@ -830,7 +830,7 @@ class DeviantArtV1SourceStrategyTest {
         when(keycloakServiceClient.getKeycloakIdentityProviderToken(any(), any(), any())).thenReturn(new KeycloakIdpTokenQueryDTO());
         when(deviantArtServiceClient.getUser(any(), any())).thenReturn(deviantArtResponse);
 
-        SourceStrategy.ValidationResult validationResult = deviantArtV1SourceStrategy.validateUser(data);
+        SourceStrategy.ValidationResult validationResult = deviantArtV1SourceStrategy.validateArtist(data);
 
         // Then
         assertAll(() -> {

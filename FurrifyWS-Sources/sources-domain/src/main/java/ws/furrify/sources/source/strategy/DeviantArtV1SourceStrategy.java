@@ -1,5 +1,7 @@
 package ws.furrify.sources.source.strategy;
 
+import lombok.NonNull;
+import ws.furrify.shared.cache.CacheManager;
 import ws.furrify.sources.keycloak.KeycloakServiceClient;
 import ws.furrify.sources.keycloak.KeycloakServiceClientImpl;
 import ws.furrify.sources.keycloak.PropertyHolder;
@@ -8,12 +10,16 @@ import ws.furrify.sources.providers.deviantart.DeviantArtScrapperClientImpl;
 import ws.furrify.sources.providers.deviantart.DeviantArtServiceClient;
 import ws.furrify.sources.providers.deviantart.DeviantArtServiceClientImpl;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtDeviationQueryDTO;
+import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserDeviationsQueryDTO;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserQueryDTO;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Version 1 of Deviant Art Strategy.
@@ -21,12 +27,14 @@ import java.util.HashMap;
  *
  * @author sky
  */
-public class DeviantArtV1SourceStrategy implements SourceStrategy {
+public class DeviantArtV1SourceStrategy implements
+        SourceStrategy,
+        FetchSourceArtistContent<DeviantArtDeviationQueryDTO, DeviantArtDeviationQueryDTO> {
+    final static String BROKER_ID = "deviantart";
 
     final static String PROTOCOL = "https://";
     final static String DOMAIN = "deviantart.com";
     final static String WWW_SUBDOMAIN = "www.";
-    final static String BROKER_ID = "deviantart";
     final static String DEVIATION_URL_FIELD = "url";
     final static String USER_URL_FIELD = "url";
     final static String DEVIATION_ART_PATH = "art";
@@ -49,15 +57,15 @@ public class DeviantArtV1SourceStrategy implements SourceStrategy {
         this.deviantArtScrapperClient = new DeviantArtScrapperClientImpl();
     }
 
-    public DeviantArtV1SourceStrategy(final KeycloakServiceClient keycloakService,
-                                      final DeviantArtServiceClient deviantArtService) {
+    public DeviantArtV1SourceStrategy(@NonNull final KeycloakServiceClient keycloakService,
+                                      @NonNull final DeviantArtServiceClient deviantArtService) {
         this.keycloakService = keycloakService;
         this.deviantArtService = deviantArtService;
         this.deviantArtScrapperClient = new DeviantArtScrapperClientImpl();
     }
 
     @Override
-    public ValidationResult validateMedia(final HashMap<String, String> requestData) {
+    public ValidationResult validateMedia(@NonNull final HashMap<String, String> requestData) {
         if (requestData.get(DEVIATION_URL_FIELD) == null || requestData.get(DEVIATION_URL_FIELD).isBlank()) {
             return ValidationResult.invalid("Deviation url is required.");
         }
@@ -94,10 +102,8 @@ public class DeviantArtV1SourceStrategy implements SourceStrategy {
             return ValidationResult.invalid("Deviation not found.");
         }
 
-        String providerBearerToken = "Bearer " + keycloakService.getKeycloakIdentityProviderToken(null, PropertyHolder.REALM, BROKER_ID).getAccessToken();
-
         DeviantArtDeviationQueryDTO deviationQueryDTO =
-                deviantArtService.getDeviation(providerBearerToken, deviationId);
+                deviantArtService.getDeviation(getProviderBearerToken(), deviationId);
         if (deviationQueryDTO == null) {
             return ValidationResult.invalid("Deviation not found.");
         }
@@ -111,7 +117,7 @@ public class DeviantArtV1SourceStrategy implements SourceStrategy {
     }
 
     @Override
-    public ValidationResult validateUser(final HashMap<String, String> requestData) {
+    public ValidationResult validateArtist(@NonNull final HashMap<String, String> requestData) {
         if (requestData.get(USER_URL_FIELD) == null || requestData.get(USER_URL_FIELD).isBlank()) {
             return ValidationResult.invalid("User url is required.");
         }
@@ -138,10 +144,8 @@ public class DeviantArtV1SourceStrategy implements SourceStrategy {
             return ValidationResult.invalid("User url is invalid.");
         }
 
-        String providerBearerToken = "Bearer " + keycloakService.getKeycloakIdentityProviderToken(null, PropertyHolder.REALM, BROKER_ID).getAccessToken();
-
         DeviantArtUserQueryDTO userQueryDTO =
-                deviantArtService.getUser(providerBearerToken, path[USERNAME_PATH_POSITION_IN_URI]);
+                deviantArtService.getUser(getProviderBearerToken(), path[USERNAME_PATH_POSITION_IN_URI]);
         if (userQueryDTO == null) {
             return ValidationResult.invalid("User not found.");
         }
@@ -158,5 +162,59 @@ public class DeviantArtV1SourceStrategy implements SourceStrategy {
     @Override
     public ValidationResult validateAttachment(final HashMap<String, String> data) {
         return validateMedia(data);
+    }
+
+    @Override
+    public List<DeviantArtDeviationQueryDTO> fetchArtistMediaList(@NonNull final HashMap<String, String> data,
+                                                                  final CacheManager<String, List<DeviantArtDeviationQueryDTO>> cacheManager) {
+        // Extract user name from source data
+        String username = data.get(USER_USERNAME_FIELD);
+
+        // Sanity check
+        if (username == null || username.isBlank()) {
+            throw new IllegalStateException("Source data doesn't contain required values.");
+        }
+
+        // Use cached response if user exists in cache
+        if (cacheManager != null && cacheManager.exists(username)) {
+            return cacheManager.get(username);
+        }
+
+        boolean hasMore = true;
+        int nextOffset = 0;
+
+        List<DeviantArtDeviationQueryDTO> deviations = new ArrayList<>();
+
+        while (hasMore) {
+            DeviantArtUserDeviationsQueryDTO response =
+                    deviantArtService.getUserDeviations(
+                            getProviderBearerToken(),
+                            username,
+                            DeviantArtServiceClient.API_DEVIATIONS_FETCH_LIMIT,
+                            nextOffset
+                    );
+
+            hasMore = response.getHasMore();
+            nextOffset = response.getNextOffset();
+
+            // Add chunk of deviations received from API
+            deviations.addAll(response.getDeviations());
+        }
+
+        if (cacheManager != null) {
+            cacheManager.put(username, deviations, Duration.ofDays(1));
+        }
+
+        return deviations;
+    }
+
+    @Override
+    public List<DeviantArtDeviationQueryDTO> fetchArtistAttachments(@NonNull final HashMap<String, String> data,
+                                                                    final CacheManager<String, List<DeviantArtDeviationQueryDTO>> cacheManager) {
+        return fetchArtistMediaList(data, cacheManager);
+    }
+
+    private String getProviderBearerToken() {
+        return "Bearer " + keycloakService.getKeycloakIdentityProviderToken(null, PropertyHolder.REALM, BROKER_ID).getAccessToken();
     }
 }

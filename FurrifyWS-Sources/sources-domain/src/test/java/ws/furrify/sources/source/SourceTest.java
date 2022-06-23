@@ -42,7 +42,7 @@ class SourceTest {
                     }
 
                     @Override
-                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                    public ValidationResult validateArtist(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
 
@@ -104,7 +104,7 @@ class SourceTest {
                     }
 
                     @Override
-                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                    public ValidationResult validateArtist(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
 
@@ -128,7 +128,7 @@ class SourceTest {
             }
 
             @Override
-            public ValidationResult validateUser(final HashMap<String, String> data) {
+            public ValidationResult validateArtist(final HashMap<String, String> data) {
                 return ValidationResult.valid(requestData);
             }
 
@@ -207,7 +207,7 @@ class SourceTest {
                     }
 
                     @Override
-                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                    public ValidationResult validateArtist(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
 
@@ -231,7 +231,7 @@ class SourceTest {
             }
 
             @Override
-            public ValidationResult validateUser(final HashMap<String, String> data) {
+            public ValidationResult validateArtist(final HashMap<String, String> data) {
                 return ValidationResult.valid(requestData);
             }
 
@@ -274,7 +274,7 @@ class SourceTest {
                     }
 
                     @Override
-                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                    public ValidationResult validateArtist(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
 
@@ -298,7 +298,7 @@ class SourceTest {
             }
 
             @Override
-            public ValidationResult validateUser(final HashMap<String, String> data) {
+            public ValidationResult validateArtist(final HashMap<String, String> data) {
                 return ValidationResult.valid(requestData);
             }
 

@@ -87,7 +87,7 @@ class Source {
 
         var validationResult = switch (originType) {
             case MEDIA -> finalStrategy.validateMedia(finalData);
-            case ARTIST -> finalStrategy.validateUser(finalData);
+            case ARTIST -> finalStrategy.validateArtist(finalData);
             case ATTACHMENT -> finalStrategy.validateAttachment(finalData);
         };
 

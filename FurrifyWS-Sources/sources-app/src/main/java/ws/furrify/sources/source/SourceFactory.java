@@ -16,7 +16,7 @@ final class SourceFactory {
 
         var validationResult = switch (sourceDTO.getOriginType()) {
             case MEDIA -> strategy.validateMedia(sourceDTO.getData());
-            case ARTIST -> strategy.validateUser(sourceDTO.getData());
+            case ARTIST -> strategy.validateArtist(sourceDTO.getData());
             case ATTACHMENT -> strategy.validateAttachment(sourceDTO.getData());
         };
 

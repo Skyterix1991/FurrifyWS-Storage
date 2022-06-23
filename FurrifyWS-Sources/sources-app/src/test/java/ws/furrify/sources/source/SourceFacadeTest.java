@@ -56,7 +56,7 @@ class SourceFacadeTest {
                     }
 
                     @Override
-                    public ValidationResult validateUser(final HashMap<String, String> data) {
+                    public ValidationResult validateArtist(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
 

@@ -33,7 +33,7 @@ public interface SourceStrategy {
      * @param data Data given in form of hash map containing information to access ex. id.
      * @return Instance of Validation Result.
      */
-    ValidationResult validateUser(HashMap<String, String> data);
+    ValidationResult validateArtist(HashMap<String, String> data);
 
     /**
      * Validate if given data is matching strategy requirements for remote attachment.

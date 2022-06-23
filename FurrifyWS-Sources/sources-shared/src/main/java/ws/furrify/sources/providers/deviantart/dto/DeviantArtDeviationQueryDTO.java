@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Deviation dto recived from DeviantArt API.
+ * Deviation dto received from DeviantArt API.
  *
  * @author Skyte
  */
