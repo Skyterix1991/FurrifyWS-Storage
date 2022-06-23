@@ -1,7 +1,11 @@
 package ws.furrify.sources.source.strategy;
 
+import ws.furrify.sources.keycloak.KeycloakServiceClient;
+import ws.furrify.sources.keycloak.KeycloakServiceClientImpl;
 import ws.furrify.sources.providers.patreon.PatreonScrapperClient;
 import ws.furrify.sources.providers.patreon.PatreonScrapperClientImpl;
+import ws.furrify.sources.providers.patreon.PatreonServiceClient;
+import ws.furrify.sources.providers.patreon.PatreonServiceClientImpl;
 
 import java.io.IOException;
 import java.net.URI;
@@ -34,8 +38,19 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
     private final static byte CAMPAIGN_USERNAME_PATH_SEGMENTS = 2;
 
     private final PatreonScrapperClient patreonScrapperClient;
+    private final KeycloakServiceClient keycloakService;
+    private final PatreonServiceClient patreonService;
 
     public PatreonV1SourceStrategy() {
+        this.keycloakService = new KeycloakServiceClientImpl();
+        this.patreonService = new PatreonServiceClientImpl();
+        this.patreonScrapperClient = new PatreonScrapperClientImpl();
+    }
+
+    public PatreonV1SourceStrategy(final KeycloakServiceClient keycloakService,
+                                   final PatreonServiceClient patreonService) {
+        this.keycloakService = keycloakService;
+        this.patreonService = patreonService;
         this.patreonScrapperClient = new PatreonScrapperClientImpl();
     }
 
