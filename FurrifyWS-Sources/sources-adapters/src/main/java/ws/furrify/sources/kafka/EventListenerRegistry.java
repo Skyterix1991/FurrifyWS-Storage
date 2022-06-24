@@ -38,7 +38,7 @@ class EventListenerRegistry {
         sourceFacade.handleEvent(UUID.fromString(key), sourceEvent);
     }
 
-    @KafkaListener(topics = "source_refresh_request_events")
+    @KafkaListener(topics = "refresh_request_events")
     @Retryable(
             value = {Exception.class},
             maxAttempts = 3,

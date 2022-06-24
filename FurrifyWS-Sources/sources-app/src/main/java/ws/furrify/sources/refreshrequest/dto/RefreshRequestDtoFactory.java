@@ -30,12 +30,12 @@ public class RefreshRequestDtoFactory {
 
         var refreshRequestId = UUID.fromString(refreshRequestEvent.getRefreshRequestId());
         var artistId = UUID.fromString(refreshRequestEvent.getData().getArtistId());
-        var ownerId = UUID.fromString(refreshRequestEvent.getData().getOwnerId());
 
         return RefreshRequestDTO.builder()
                 .id(
                         refreshRequestQueryRepository.getIdByRefreshRequestId(refreshRequestId)
                 )
+                .refreshRequestId(refreshRequestId)
                 .artistId(artistId)
                 .ownerId(key)
                 .status(
