@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ws.furrify.shared.vo.SourceOriginType;
 import ws.furrify.sources.source.strategy.SourceStrategy;
+import ws.furrify.sources.source.vo.RemoteContent;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,6 +32,8 @@ class SourceSnapshot {
     private UUID postId;
     private UUID sourceId;
     private UUID ownerId;
+
+    private List<RemoteContent> remoteContentList;
 
     private Map<String, String> data;
 

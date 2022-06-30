@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ws.furrify.sources.source.dto.query.SourceDetailsQueryDTO;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,7 +18,9 @@ public interface SourceQueryRepository {
 
     Long getIdBySourceId(UUID sourceId);
 
-    Page<SourceDetailsQueryDTO> findAllByOwnerIdAndArtistId(UUID userId, UUID artistId, Pageable pageable);
+    List<SourceDetailsQueryDTO> findAllByOwnerIdAndArtistId(UUID userId, UUID artistId);
+
+    Page<SourceDetailsQueryDTO> findAllByOwnerIdAndArtistIdAndPageable(UUID userId, UUID artistId, Pageable pageable);
 
     Page<SourceDetailsQueryDTO> findAllByOwnerIdAndPostIdAndMediaId(UUID userId, UUID postId, UUID mediaId, Pageable pageable);
 

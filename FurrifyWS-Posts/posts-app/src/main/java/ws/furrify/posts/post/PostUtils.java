@@ -118,7 +118,11 @@ class PostUtils {
                                                                 .build()
                                                 ).collect(Collectors.toList())
                                 )
-                                .setCreateDate(postSnapshot.getCreateDate().toInstant())
+                                .setCreateDate(
+                                        (postSnapshot.getCreateDate() != null) ?
+                                                postSnapshot.getCreateDate().toInstant() :
+                                                null
+                                )
                 ).build();
     }
 

@@ -2,6 +2,7 @@ package ws.furrify.sources.source;
 
 import ws.furrify.shared.kafka.DomainEventPublisher;
 import ws.furrify.sources.source.converter.SourceStrategyAttributeConverter;
+import ws.furrify.sources.source.vo.RemoteContentData;
 import ws.furrify.sources.source.vo.SourceData;
 
 import java.time.Instant;
@@ -39,6 +40,13 @@ class SourceUtils {
                                         sourceStrategyAttributeConverter.convertToDatabaseColumn(
                                                 sourceSnapshot.getStrategy()
                                         )
+                                )
+                                .setRemoteContentList(sourceSnapshot.getRemoteContentList().stream()
+                                        .map(remoteContent -> RemoteContentData.newBuilder()
+                                                .setContentIdentifier(remoteContent.getContentIdentifier())
+                                                .setUri(remoteContent.getUri().toString())
+                                                .build())
+                                        .toList()
                                 )
                                 .setDataHashMap(sourceSnapshot.getData())
                                 .setOriginType(sourceSnapshot.getOriginType().name())

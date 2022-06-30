@@ -32,4 +32,9 @@ public class PatreonV1SourceStrategy implements SourceStrategy {
 
         return ValidationResult.valid(new HashMap<>(0));
     }
+
+    @Override
+    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+        return null;
+    }
 }

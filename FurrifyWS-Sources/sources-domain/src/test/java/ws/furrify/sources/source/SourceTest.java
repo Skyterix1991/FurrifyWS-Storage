@@ -50,6 +50,12 @@ class SourceTest {
                     public ValidationResult validateAttachment(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
+
+                    @Override
+                    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                        // TODO
+                        return null;
+                    }
                 })
                 .data(new HashMap<>())
                 .createDate(ZonedDateTime.now())
@@ -112,6 +118,12 @@ class SourceTest {
                     public ValidationResult validateAttachment(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
+
+                    @Override
+                    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                        // TODO
+                        return null;
+                    }
                 })
                 .data(new HashMap<>())
                 .createDate(ZonedDateTime.now())
@@ -135,6 +147,12 @@ class SourceTest {
             @Override
             public ValidationResult validateAttachment(final HashMap<String, String> data) {
                 return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                // TODO
+                return null;
             }
         };
 
@@ -215,6 +233,12 @@ class SourceTest {
                     public ValidationResult validateAttachment(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
+
+                    @Override
+                    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                        // TODO
+                        return null;
+                    }
                 })
                 .data(new HashMap<>())
                 .createDate(ZonedDateTime.now())
@@ -238,6 +262,12 @@ class SourceTest {
             @Override
             public ValidationResult validateAttachment(final HashMap<String, String> data) {
                 return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                // TODO
+                return null;
             }
         };
 
@@ -282,6 +312,12 @@ class SourceTest {
                     public ValidationResult validateAttachment(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
+
+                    @Override
+                    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                        // TODO
+                        return null;
+                    }
                 })
                 .data(new HashMap<>())
                 .createDate(ZonedDateTime.now())
@@ -305,6 +341,12 @@ class SourceTest {
             @Override
             public ValidationResult validateAttachment(final HashMap<String, String> data) {
                 return ValidationResult.valid(requestData);
+            }
+
+            @Override
+            public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                // TODO
+                return null;
             }
         };
 

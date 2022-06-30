@@ -25,11 +25,18 @@ External requirements:
 - Keycloak
 - Kafka
 - Confluent schema registry
+- Infinispan Cache Server
 
 ## Setup Keycloak
 
 To set up keycloak you can use [this](#) docker image. In panel, you can import settings from [this](#) file.
 ! Links are not yet available as project version 0.0.1 is not released.
+
+## Setup Infinispan
+
+You will need to set up following data containers in server management console:
+
+- "sources"
 
 ## Databases
 

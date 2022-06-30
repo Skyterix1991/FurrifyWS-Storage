@@ -5,10 +5,14 @@ import ws.furrify.shared.vo.SourceOriginType;
 import ws.furrify.sources.source.SourceEvent;
 import ws.furrify.sources.source.SourceQueryRepository;
 import ws.furrify.sources.source.converter.SourceStrategyAttributeConverter;
+import ws.furrify.sources.source.vo.RemoteContent;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -56,6 +60,18 @@ public class SourceDtoFactory {
                 )
                 .originType(
                         SourceOriginType.valueOf(sourceEvent.getData().getOriginType())
+                )
+                .remoteContentList(
+                        sourceEvent.getData().getRemoteContentList() != null ? sourceEvent.getData().getRemoteContentList().stream()
+                                .map(remoteContentEventData -> {
+                                    try {
+                                        return new RemoteContent(null, remoteContentEventData.getContentIdentifier(), new URI(remoteContentEventData.getUri()));
+                                    } catch (URISyntaxException e) {
+                                        throw new RuntimeException("URI received in Source Remote Content is not valid.");
+                                    }
+                                })
+                                .toList()
+                                : new ArrayList<>()
                 )
                 .data(
                         (sourceEvent.getData().getDataHashMap() != null) ?

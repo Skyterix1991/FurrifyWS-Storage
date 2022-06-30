@@ -38,7 +38,7 @@ public interface DeviantArtServiceClient {
      * @return User query dto.
      */
     @Headers("Authorization: {bearerToken}")
-    @RequestLine("GET /user/profile/{username}")
+    @RequestLine("GET /user/profile/{username}?mature_content=true")
     DeviantArtUserQueryDTO getUser(@Param("bearerToken") String bearerToken, @Param("username") String username);
 
     /**
@@ -51,7 +51,7 @@ public interface DeviantArtServiceClient {
      * @return List of deviations.
      */
     @Headers("Authorization: {bearerToken}")
-    @RequestLine("GET /api/v1/oauth2/collections/all?username={username}&offset={offset}&limit={limit}")
+    @RequestLine("GET /collections/all?username={username}&offset={offset}&limit={limit}&mature_content=true")
     DeviantArtUserDeviationsQueryDTO getUserDeviations(@Param("bearerToken") String bearerToken,
                                                        @Param("username") String username,
                                                        @Param("limit") byte limit,

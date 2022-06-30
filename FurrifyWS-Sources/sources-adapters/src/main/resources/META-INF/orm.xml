@@ -22,6 +22,9 @@
             <basic name="postId">
                 <column updatable="false" nullable="true"/>
             </basic>
+            <basic name="strategy">
+                <column updatable="false" nullable="false"/>
+            </basic>
             <basic name="originType">
                 <column nullable="false"/>
                 <enumerated>STRING</enumerated>
@@ -29,7 +32,12 @@
             <basic name="createDate">
                 <column updatable="false" nullable="false"/>
             </basic>
-
+            <one-to-many fetch="LAZY" name="remoteContentList"
+                         target-entity="ws.furrify.sources.source.vo.RemoteContent">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
             <element-collection fetch="EAGER" name="data">
                 <map-key-column name="key_data"/>
                 <column name="data"/>
@@ -59,8 +67,27 @@
                 <column nullable="false"/>
                 <enumerated>STRING</enumerated>
             </basic>
+            <basic name="bearerToken">
+                <!-- 4096 (Token) + 7 ("Bearer ") -->
+                <column length="4103" updatable="false" nullable="false"/>
+            </basic>
             <basic name="createDate">
                 <column updatable="false" nullable="false"/>
+            </basic>
+        </attributes>
+    </entity>
+
+    <entity class="ws.furrify.sources.source.vo.RemoteContent" access="FIELD">
+        <table name="source_remote_contents"/>
+        <attributes>
+            <id name="id">
+                <generated-value strategy="SEQUENCE"/>
+            </id>
+            <basic name="contentIdentifier">
+                <column nullable="false"/>
+            </basic>
+            <basic name="uri">
+                <column nullable="false"/>
             </basic>
         </attributes>
     </entity>

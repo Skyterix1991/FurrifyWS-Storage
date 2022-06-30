@@ -30,5 +30,7 @@ class RefreshRequestSnapshot {
 
     private RefreshRequestStatus status;
 
+    private String bearerToken;
+
     private ZonedDateTime createDate;
 }

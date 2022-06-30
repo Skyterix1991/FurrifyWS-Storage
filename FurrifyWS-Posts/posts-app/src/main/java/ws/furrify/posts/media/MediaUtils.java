@@ -42,7 +42,11 @@ class MediaUtils {
                                 .setThumbnailUri(
                                         (mediaSnapshot.getThumbnailUri() != null) ? mediaSnapshot.getThumbnailUri().toString() : null
                                 )
-                                .setCreateDate(mediaSnapshot.getCreateDate().toInstant())
+                                .setCreateDate(
+                                        (mediaSnapshot.getCreateDate() != null) ?
+                                                mediaSnapshot.getCreateDate().toInstant() :
+                                                null
+                                )
                 ).build();
     }
 

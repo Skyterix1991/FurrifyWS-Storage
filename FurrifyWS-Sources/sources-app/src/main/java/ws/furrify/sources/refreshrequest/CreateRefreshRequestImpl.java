@@ -3,15 +3,19 @@ package ws.furrify.sources.refreshrequest;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ws.furrify.shared.exception.Errors;
 import ws.furrify.shared.exception.NoArtistSourcesFoundForRefreshException;
 import ws.furrify.shared.exception.RecordNotFoundException;
 import ws.furrify.shared.kafka.DomainEventPublisher;
 import ws.furrify.sources.artists.ArtistServiceClient;
 import ws.furrify.sources.refreshrequest.dto.RefreshRequestDTO;
+import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
 import ws.furrify.sources.source.SourceQueryRepository;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -50,6 +54,8 @@ final class CreateRefreshRequestImpl implements CreateRefreshRequest {
                         .refreshRequestId(refreshRequestId)
                         .artistId(artistId)
                         .ownerId(ownerId)
+                        .status(RefreshRequestStatus.PENDING)
+                        .bearerToken(extractBearerTokenFromRequest())
                         .createDate(ZonedDateTime.now())
                         .build()
         );
@@ -67,5 +73,9 @@ final class CreateRefreshRequestImpl implements CreateRefreshRequest {
 
 
         return refreshRequestId;
+    }
+
+    private String extractBearerTokenFromRequest() {
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getHeader("Authorization");
     }
 }

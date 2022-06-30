@@ -9,6 +9,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ws.furrify.sources.source.dto.query.SourceDetailsQueryDTO;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,7 +42,7 @@ interface SqlSourceQueryRepositoryImpl extends SourceQueryRepository, Repository
 
     @Override
     @Query("select s from SourceSnapshot s where s.ownerId = ?1 and s.originType = 'ARTIST' and s.originId = ?2")
-    Page<SourceDetailsQueryDTO> findAllByOwnerIdAndArtistId(UUID userId, UUID artistId, Pageable pageable);
+    Page<SourceDetailsQueryDTO> findAllByOwnerIdAndArtistIdAndPageable(UUID userId, UUID artistId, Pageable pageable);
 
     @Override
     @Query("select s from SourceSnapshot s where s.ownerId = ?1 and s.postId = ?2 and s.originType = 'MEDIA' and s.originId = ?3")
@@ -55,6 +56,10 @@ interface SqlSourceQueryRepositoryImpl extends SourceQueryRepository, Repository
     @Query("select count(source) from SourceSnapshot source where source.ownerId = ?1 " +
             "and source.originId = ?2")
     Long countByOwnerIdAndOriginId(UUID ownerId, UUID originId);
+
+    @Override
+    @Query("select s from SourceSnapshot s where s.ownerId = ?1 and s.originType = 'ARTIST' and s.originId = ?2")
+    List<SourceDetailsQueryDTO> findAllByOwnerIdAndArtistId(UUID userId, UUID artistId);
 }
 
 @org.springframework.stereotype.Repository

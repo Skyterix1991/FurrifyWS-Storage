@@ -29,6 +29,11 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_ZONE}
 
+infinispan:
+  remote:
+    server-list: ${INFINISPAN_REMOTE_SERVER_LIST}
+
+
 server:
   port: 8080
 

@@ -74,7 +74,8 @@ final class CreateSourceImpl implements CreateSource {
                         .data(sourceDTO.getData())
                         .originType(sourceDTO.getOriginType())
                         .createDate(ZonedDateTime.now())
-                        .build()
+                        .build(),
+                true
         );
 
         // Publish create source event

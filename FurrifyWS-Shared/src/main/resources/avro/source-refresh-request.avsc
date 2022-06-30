@@ -16,6 +16,11 @@
         "doc": "Artist UUID."
       },
       {
+        "name": "bearerToken",
+        "type": "string",
+        "doc": "Request bearer token."
+      },
+      {
         "name": "status",
         "type": "string",
         "doc": "Status enum."

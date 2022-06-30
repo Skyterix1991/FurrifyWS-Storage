@@ -5,6 +5,7 @@ import lombok.extern.java.Log;
 import ws.furrify.shared.kafka.DomainEventPublisher;
 import ws.furrify.sources.refreshrequest.dto.RefreshRequestDTO;
 import ws.furrify.sources.refreshrequest.dto.RefreshRequestDtoFactory;
+import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
 
 import java.util.UUID;
 
@@ -16,9 +17,11 @@ import java.util.UUID;
 final public class RefreshRequestFacade {
 
     private final CreateRefreshRequest createRefreshRequestImpl;
+    private final HandleRefreshRequest handleRefreshRequestImpl;
     private final RefreshRequestRepository refreshRequestRepository;
-    private final RefreshRequestFactory refreshRequestFactory;
     private final RefreshRequestDtoFactory refreshRequestDtoFactory;
+
+    private final RefreshRequestFactory refreshRequestFactory;
 
     /**
      * Handle incoming refresh request events.
@@ -47,19 +50,21 @@ final public class RefreshRequestFacade {
         return createRefreshRequestImpl.createRefreshRequest(ownerId, artistId);
     }
 
+    /**
+     * Handle refresh request. Contact API's and do all necessary things to get new content from other platforms for particular artist.
+     *
+     * @param refreshRequestEvent Refresh request event to handle.
+     */
+    public void handleRefreshRequest(final UUID key, final RefreshRequestEvent refreshRequestEvent) {
+        RefreshRequestDTO refreshRequestDTO = refreshRequestDtoFactory.from(key, refreshRequestEvent);
+        // Start only if request is not handled yet
+        if (refreshRequestDTO.getStatus() == RefreshRequestStatus.PENDING) {
+            handleRefreshRequestImpl.handleRefreshRequest(refreshRequestDTO);
+        }
+    }
+
     private void saveRefreshRequestToDatabase(final RefreshRequestDTO refreshRequestDTO) {
-        refreshRequestRepository.save(
-                RefreshRequest.restore(
-                        RefreshRequestSnapshot.builder()
-                                .id(refreshRequestDTO.getId())
-                                .refreshRequestId(refreshRequestDTO.getRefreshRequestId())
-                                .artistId(refreshRequestDTO.getArtistId())
-                                .ownerId(refreshRequestDTO.getOwnerId())
-                                .status(refreshRequestDTO.getStatus())
-                                .createDate(refreshRequestDTO.getCreateDate())
-                                .build()
-                )
-        );
+        refreshRequestRepository.save(refreshRequestFactory.from(refreshRequestDTO));
     }
 
 }

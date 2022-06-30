@@ -1,38 +1,40 @@
-package ws.furrify.artists.artist.vo;
+package ws.furrify.sources.source.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
 import java.net.URI;
-import java.util.UUID;
 
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
+
 /**
- * @author Skyte
+ * Remote content entity.
  */
 @Data
 @Setter(value = PRIVATE)
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = PROTECTED)
-public class ArtistAvatar {
-    private long id;
+public class RemoteContent {
+
+    /**
+     * Needs to be excluded for content compare to work in refresh request handling
+     */
+    @EqualsAndHashCode.Exclude
+    private Long id;
 
     @NonNull
-    private UUID avatarId;
+    private String contentIdentifier;
 
     @NonNull
-    private URI fileUri;
+    @EqualsAndHashCode.Exclude
+    private URI uri;
 
-    @NonNull
-    private URI thumbnailUri;
-
-    @NonNull
-    private String extension;
 }

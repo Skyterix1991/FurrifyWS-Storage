@@ -5,14 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import org.springframework.lang.Nullable;
 import ws.furrify.shared.exception.Errors;
 import ws.furrify.shared.exception.InvalidDataGivenException;
 import ws.furrify.shared.vo.SourceOriginType;
 import ws.furrify.sources.source.strategy.SourceStrategy;
+import ws.furrify.sources.source.vo.RemoteContent;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,6 +35,9 @@ class Source {
     private final UUID ownerId;
 
     @NonNull
+    private List<RemoteContent> remoteContentList;
+
+    @NonNull
     private Map<String, String> data;
 
     @NonNull
@@ -50,6 +55,7 @@ class Source {
                 sourceSnapshot.getOriginId(),
                 sourceSnapshot.getPostId(),
                 sourceSnapshot.getOwnerId(),
+                sourceSnapshot.getRemoteContentList(),
                 new HashMap<>(sourceSnapshot.getData()),
                 sourceSnapshot.getStrategy(),
                 sourceSnapshot.getOriginType(),
@@ -64,6 +70,7 @@ class Source {
                 .postId(postId)
                 .sourceId(sourceId)
                 .ownerId(ownerId)
+                .remoteContentList(remoteContentList)
                 .data(new HashMap<>(data))
                 .strategy(strategy)
                 .originType(originType)
@@ -79,8 +86,8 @@ class Source {
      * @param data     Nullable data hashmap.
      * @param strategy Nullable strategy.
      */
-    void updateData(@Nullable final HashMap<String, String> data,
-                    @Nullable final SourceStrategy strategy) {
+    void updateData(final HashMap<String, String> data,
+                    final SourceStrategy strategy) {
         // Replace with current values if null
         final HashMap<String, String> finalData = (data != null) ? data : new HashMap<>(this.data);
         final SourceStrategy finalStrategy = (strategy != null) ? strategy : this.strategy;
@@ -101,5 +108,9 @@ class Source {
         this.strategy = finalStrategy;
         // Update data with validation result data
         this.data = validationResult.getData();
+    }
+
+    void replaceRemoteContent(@NonNull final List<RemoteContent> remoteContentList) {
+        this.remoteContentList = new ArrayList<>(remoteContentList);
     }
 }

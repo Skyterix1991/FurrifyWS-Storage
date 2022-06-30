@@ -43,6 +43,14 @@ public interface SourceStrategy {
      */
     ValidationResult validateAttachment(HashMap<String, String> data);
 
+    /**
+     * Convert values from data to unique string.
+     *
+     * @param data Data given in form of hash map containing information to access ex. id.
+     * @return Unique string identifying creator on given platform.
+     */
+    String getRemoteArtistIdentifier(HashMap<String, String> data);
+
     @Value
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     class ValidationResult {

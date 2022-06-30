@@ -1,6 +1,10 @@
 package ws.furrify.sources.source.strategy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import ws.furrify.shared.cache.CacheManager;
 import ws.furrify.sources.keycloak.KeycloakServiceClient;
 import ws.furrify.sources.keycloak.KeycloakServiceClientImpl;
@@ -12,6 +16,7 @@ import ws.furrify.sources.providers.deviantart.DeviantArtServiceClientImpl;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtDeviationQueryDTO;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserDeviationsQueryDTO;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserQueryDTO;
+import ws.furrify.sources.source.vo.RemoteContent;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,6 +25,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Version 1 of Deviant Art Strategy.
@@ -27,10 +34,12 @@ import java.util.List;
  *
  * @author sky
  */
+@Log4j2
 public class DeviantArtV1SourceStrategy implements
         SourceStrategy,
-        FetchSourceArtistContent<DeviantArtDeviationQueryDTO, DeviantArtDeviationQueryDTO> {
+        SourceArtistContentFetcher {
     final static String BROKER_ID = "deviantart";
+    final static String BROKER_VERSION = "v1";
 
     final static String PROTOCOL = "https://";
     final static String DOMAIN = "deviantart.com";
@@ -51,6 +60,8 @@ public class DeviantArtV1SourceStrategy implements
     private final DeviantArtServiceClient deviantArtService;
     private final DeviantArtScrapperClient deviantArtScrapperClient;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     public DeviantArtV1SourceStrategy() {
         this.keycloakService = new KeycloakServiceClientImpl();
         this.deviantArtService = new DeviantArtServiceClientImpl();
@@ -64,6 +75,7 @@ public class DeviantArtV1SourceStrategy implements
         this.deviantArtScrapperClient = new DeviantArtScrapperClientImpl();
     }
 
+    // TODO Save as remote content
     @Override
     public ValidationResult validateMedia(@NonNull final HashMap<String, String> requestData) {
         if (requestData.get(DEVIATION_URL_FIELD) == null || requestData.get(DEVIATION_URL_FIELD).isBlank()) {
@@ -165,8 +177,7 @@ public class DeviantArtV1SourceStrategy implements
     }
 
     @Override
-    public List<DeviantArtDeviationQueryDTO> fetchArtistMediaList(@NonNull final HashMap<String, String> data,
-                                                                  final CacheManager<String, List<DeviantArtDeviationQueryDTO>> cacheManager) {
+    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
         // Extract user name from source data
         String username = data.get(USER_USERNAME_FIELD);
 
@@ -175,20 +186,47 @@ public class DeviantArtV1SourceStrategy implements
             throw new IllegalStateException("Source data doesn't contain required values.");
         }
 
+        return getRemoteArtistIdentifier(username);
+    }
+
+    @Override
+    public Set<RemoteContent> fetchArtistContent(@NonNull final HashMap<String, String> data,
+                                                 @NonNull final String bearerToken,
+                                                 final CacheManager cacheManager) {
+        // Extract user name from source data
+        String username = data.get(USER_USERNAME_FIELD);
+
+        // Sanity check
+        if (username == null || username.isBlank()) {
+            throw new IllegalStateException("Source data doesn't contain required values.");
+        }
+
+        final String cacheEntryKey = getRemoteArtistIdentifier(data);
+
         // Use cached response if user exists in cache
-        if (cacheManager != null && cacheManager.exists(username)) {
-            return cacheManager.get(username);
+        if (cacheManager != null && cacheManager.exists(cacheEntryKey)) {
+            try {
+                return mapDeviationsToSourceExternalContent(
+                        objectMapper.readValue(
+                                cacheManager.get(cacheEntryKey, String.class), new TypeReference<>() {
+                                }
+                        )
+                );
+            } catch (JsonProcessingException e) {
+                log.error("Cannot convert json value from cache to DeviantArtDeviationQueryDTO.");
+            }
         }
 
         boolean hasMore = true;
-        int nextOffset = 0;
+        // Possibly null when response hasMore=false
+        Integer nextOffset = 0;
 
         List<DeviantArtDeviationQueryDTO> deviations = new ArrayList<>();
 
         while (hasMore) {
             DeviantArtUserDeviationsQueryDTO response =
                     deviantArtService.getUserDeviations(
-                            getProviderBearerToken(),
+                            getProviderBearerToken(bearerToken),
                             username,
                             DeviantArtServiceClient.API_DEVIATIONS_FETCH_LIMIT,
                             nextOffset
@@ -201,20 +239,34 @@ public class DeviantArtV1SourceStrategy implements
             deviations.addAll(response.getDeviations());
         }
 
+        // Save to cache if present
         if (cacheManager != null) {
-            cacheManager.put(username, deviations, Duration.ofDays(1));
+            try {
+                cacheManager.put(cacheEntryKey, objectMapper.writeValueAsString(deviations), Duration.ofDays(1));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Error when converting deviation list to json.");
+            }
         }
 
-        return deviations;
+        return mapDeviationsToSourceExternalContent(deviations);
     }
 
-    @Override
-    public List<DeviantArtDeviationQueryDTO> fetchArtistAttachments(@NonNull final HashMap<String, String> data,
-                                                                    final CacheManager<String, List<DeviantArtDeviationQueryDTO>> cacheManager) {
-        return fetchArtistMediaList(data, cacheManager);
+    private String getRemoteArtistIdentifier(String username) {
+        return BROKER_ID + "-" + BROKER_VERSION + "-" + username;
+    }
+
+    private Set<RemoteContent> mapDeviationsToSourceExternalContent(List<DeviantArtDeviationQueryDTO> deviations) {
+        return deviations.stream()
+                .map(deviation ->
+                        new RemoteContent(null, deviation.getDeviationId(), deviation.getUri()))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private String getProviderBearerToken() {
-        return "Bearer " + keycloakService.getKeycloakIdentityProviderToken(null, PropertyHolder.REALM, BROKER_ID).getAccessToken();
+        return getProviderBearerToken(null);
+    }
+
+    private String getProviderBearerToken(final String bearerToken) {
+        return "Bearer " + keycloakService.getKeycloakIdentityProviderToken(bearerToken, PropertyHolder.REALM, BROKER_ID).getAccessToken();
     }
 }

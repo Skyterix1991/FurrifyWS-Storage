@@ -125,6 +125,8 @@ services:
     environment:
       FURRIFY_LIMITS_SOURCES: 50000 # Limit amount of sources per user
       KAFKA_CONSUMER_GROUP_ID: "eu-poland-1" # A unique group id for this instance of microservice.
+      # Infinispan cache server config
+      INFINISPAN_REMOTE_SERVER_LIST: "192.168.0.200:11222"
       # Keycloak config
       KEYCLOAK_AUTH_URL: "http://192.168.0.200:6565/auth"
       KEYCLOAK_REALM: "dev"

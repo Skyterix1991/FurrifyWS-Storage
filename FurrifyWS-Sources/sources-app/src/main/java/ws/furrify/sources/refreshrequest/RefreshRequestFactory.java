@@ -1,7 +1,6 @@
 package ws.furrify.sources.refreshrequest;
 
 import ws.furrify.sources.refreshrequest.dto.RefreshRequestDTO;
-import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -14,8 +13,9 @@ final class RefreshRequestFactory {
                 .id(refreshRequestDTO.getId())
                 .refreshRequestId(refreshRequestDTO.getRefreshRequestId() != null ? refreshRequestDTO.getRefreshRequestId() : UUID.randomUUID())
                 .artistId(refreshRequestDTO.getArtistId())
-                .ownerId(refreshRequestDTO.getArtistId())
-                .status(RefreshRequestStatus.PENDING)
+                .ownerId(refreshRequestDTO.getOwnerId())
+                .status(refreshRequestDTO.getStatus())
+                .bearerToken(refreshRequestDTO.getBearerToken())
                 .createDate(
                         refreshRequestDTO.getCreateDate() != null ? refreshRequestDTO.getCreateDate() : ZonedDateTime.now()
                 )

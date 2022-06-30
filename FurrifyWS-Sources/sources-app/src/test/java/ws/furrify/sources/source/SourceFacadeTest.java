@@ -64,6 +64,12 @@ class SourceFacadeTest {
                     public ValidationResult validateAttachment(final HashMap<String, String> data) {
                         return ValidationResult.valid(data);
                     }
+
+                    @Override
+                    public String getRemoteArtistIdentifier(final HashMap<String, String> data) {
+                        // TODO
+                        return null;
+                    }
                 })
                 .data(new HashMap<>())
                 .createDate(ZonedDateTime.now())

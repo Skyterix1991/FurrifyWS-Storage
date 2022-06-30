@@ -15,12 +15,13 @@ public interface DomainEventPublisher<T> {
      */
     void publish(final Topic topic, final UUID targetId, final T event);
 
+    /**
+     * Represents ex. post_events topic in kafka.
+     */
     enum Topic {
-        /**
-         * Represents ex. post_events topic in kafka.
-         */
         ATTACHMENT("attachment_events"),
         SOURCE("source_events"),
+        SOURCE_REMOTE_CONTENT("source_remote_content_events"),
         REFRESH_REQUEST("refresh_request_events"),
         MEDIA("media_events"),
         POST("post_events"),
@@ -48,6 +49,13 @@ public interface DomainEventPublisher<T> {
          */
         CREATED,
         UPDATED
+    }
+
+    enum SourceRemoteContentEventType {
+        /**
+         * Events that can occur on Source remote content.
+         */
+        REPLACED
     }
 
     enum SourceEventType {

@@ -37,6 +37,7 @@ class RequestRefreshTest implements CommandLineRunner {
                         .artistId(artistId)
                         .refreshRequestId(requestRefreshId)
                         .status(RefreshRequestStatus.COMPLETED)
+                        .bearerToken("test")
                         .createDate(ZonedDateTime.now())
                         .build()
         );

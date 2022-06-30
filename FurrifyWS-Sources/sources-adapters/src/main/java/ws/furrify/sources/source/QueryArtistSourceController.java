@@ -52,7 +52,7 @@ class QueryArtistSourceController {
                 .build().toPageable();
 
         PagedModel<EntityModel<SourceDetailsQueryDTO>> sources = pagedResourcesAssembler.toModel(
-                sourceQueryRepository.findAllByOwnerIdAndArtistId(userId, artistId, pageable)
+                sourceQueryRepository.findAllByOwnerIdAndArtistIdAndPageable(userId, artistId, pageable)
         );
 
         sources.forEach(this::addSourceRelations);

@@ -23,5 +23,7 @@ public class RefreshRequestDTO {
 
     RefreshRequestStatus status;
 
+    String bearerToken;
+
     ZonedDateTime createDate;
 }

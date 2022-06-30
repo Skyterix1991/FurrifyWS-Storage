@@ -13,6 +13,7 @@ import ws.furrify.sources.refreshrequest.RefreshRequestEvent;
 import ws.furrify.sources.refreshrequest.RefreshRequestFacade;
 import ws.furrify.sources.source.SourceEvent;
 import ws.furrify.sources.source.SourceFacade;
+import ws.furrify.sources.source.SourceRemoteContentEvent;
 
 import java.util.UUID;
 
@@ -38,6 +39,21 @@ class EventListenerRegistry {
         sourceFacade.handleEvent(UUID.fromString(key), sourceEvent);
     }
 
+    @KafkaListener(topics = "source_remote_content_events")
+    @Retryable(
+            value = {Exception.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 10_000)
+    )
+    public void on(@Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+                   @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                   @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key,
+                   @Payload SourceRemoteContentEvent sourceRemoteContentEvent) {
+        log.info("Event received from kafka [topic=" + topic + "] [partition=" + partition + "].");
+
+        sourceFacade.handleEvent(UUID.fromString(key), sourceRemoteContentEvent);
+    }
+
     @KafkaListener(topics = "refresh_request_events")
     @Retryable(
             value = {Exception.class},
@@ -51,6 +67,26 @@ class EventListenerRegistry {
         log.info("Event received from kafka [topic=" + topic + "] [partition=" + partition + "].");
 
         refreshRequestFacade.handleEvent(UUID.fromString(key), refreshRequestEvent);
+    }
+
+    /**
+     * Refresh request that should only be handled by one free microservice.
+     * Group id will be the same across all source microservices to achieve that.
+     */
+    @KafkaListener(topics = "refresh_request_events",
+            groupId = "${spring.kafka.consumer.group-id.prefix}worker-refresh-requests")
+    @Retryable(
+            value = {Exception.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 10_000)
+    )
+    public void onRefreshRequest(@Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+                                 @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                                 @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key,
+                                 @Payload RefreshRequestEvent refreshRequestEvent) {
+        log.info("Event received from kafka [topic=" + topic + "] [partition=" + partition + "].");
+
+        refreshRequestFacade.handleRefreshRequest(UUID.fromString(key), refreshRequestEvent);
     }
 
 }

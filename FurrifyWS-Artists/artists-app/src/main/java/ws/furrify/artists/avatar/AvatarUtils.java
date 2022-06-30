@@ -42,7 +42,11 @@ class AvatarUtils {
                                 .setThumbnailUri(
                                         (avatarSnapshot.getThumbnailUri() != null) ? avatarSnapshot.getThumbnailUri().toString() : null
                                 )
-                                .setCreateDate(avatarSnapshot.getCreateDate().toInstant())
+                                .setCreateDate(
+                                        (avatarSnapshot.getCreateDate() != null) ?
+                                                avatarSnapshot.getCreateDate().toInstant() :
+                                                null
+                                )
                 ).build();
     }
 

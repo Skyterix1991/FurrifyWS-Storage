@@ -9,5 +9,5 @@ import ws.furrify.shared.security.KeycloakAuthorizationUtils;
  * @author sky
  */
 @Component
-public class KeycloakAuthorizationUtilsImpl extends KeycloakAuthorizationUtils {
+class KeycloakAuthorizationUtilsImpl extends KeycloakAuthorizationUtils {
 }

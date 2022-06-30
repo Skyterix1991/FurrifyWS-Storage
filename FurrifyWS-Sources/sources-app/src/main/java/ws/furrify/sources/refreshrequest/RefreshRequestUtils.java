@@ -31,6 +31,7 @@ class RefreshRequestUtils {
                                 .setOwnerId(refreshRequestSnapshot.getOwnerId().toString())
                                 .setArtistId(refreshRequestSnapshot.getArtistId().toString())
                                 .setStatus(refreshRequestSnapshot.getStatus().toString())
+                                .setBearerToken(refreshRequestSnapshot.getBearerToken())
                                 .setCreateDate(refreshRequestSnapshot.getCreateDate().toInstant())
                                 .build()
                 )

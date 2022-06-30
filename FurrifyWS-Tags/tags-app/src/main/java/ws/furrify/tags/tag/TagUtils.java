@@ -34,7 +34,11 @@ class TagUtils {
                                 .setDescription(tagSnapshot.getDescription())
                                 .setOwnerId(tagSnapshot.getOwnerId().toString())
                                 .setType(tagSnapshot.getType().name())
-                                .setCreateDate(tagSnapshot.getCreateDate().toInstant())
+                                .setCreateDate(
+                                        (tagSnapshot.getCreateDate() != null) ?
+                                                tagSnapshot.getCreateDate().toInstant() :
+                                                null
+                                )
                 )
                 .setOccurredOn(Instant.now())
                 .build();

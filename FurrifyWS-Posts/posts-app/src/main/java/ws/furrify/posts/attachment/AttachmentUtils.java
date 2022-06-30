@@ -38,7 +38,11 @@ class AttachmentUtils {
                                         (attachmentSnapshot.getFileUri() != null) ? attachmentSnapshot.getFileUri().toString() : null
                                 )
                                 .setMd5(attachmentSnapshot.getMd5())
-                                .setCreateDate(attachmentSnapshot.getCreateDate().toInstant())
+                                .setCreateDate(
+                                        (attachmentSnapshot.getCreateDate() != null) ?
+                                                attachmentSnapshot.getCreateDate().toInstant() :
+                                                null
+                                )
                 ).build();
     }
 

@@ -41,8 +41,10 @@ public class RefreshRequestDtoFactory {
                 .status(
                         RefreshRequestStatus.valueOf(refreshRequestEvent.getData().getStatus())
                 )
+                .bearerToken(refreshRequestEvent.getData().getBearerToken())
                 .createDate(createDate)
                 .build();
     }
+
 
 }

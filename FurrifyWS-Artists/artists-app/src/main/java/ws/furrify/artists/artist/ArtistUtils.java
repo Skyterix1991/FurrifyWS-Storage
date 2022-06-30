@@ -55,7 +55,11 @@ class ArtistUtils {
                                 .setPreferredNickname(artistSnapshot.getPreferredNickname())
                                 .setAvatar(artistAvatarData)
                                 .setSources(artistSourceDataList)
-                                .setCreateDate(artistSnapshot.getCreateDate().toInstant())
+                                .setCreateDate(
+                                        (artistSnapshot.getCreateDate() != null) ?
+                                                artistSnapshot.getCreateDate().toInstant() :
+                                                null
+                                )
                                 .build()
                 )
                 .setOccurredOn(Instant.now())

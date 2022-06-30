@@ -30,6 +30,15 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
+infinispan:
+  remote:
+    server-list: 192.168.0.200:11222
+    client-intelligence: BASIC
+    use-auth: true
+    auth-user-name: admin
+    auth-password: admin
+    marshaller: org.infinispan.commons.marshall.ProtoStreamMarshaller
+
 server:
   port: 7074
 

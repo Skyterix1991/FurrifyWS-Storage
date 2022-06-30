@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import ws.furrify.sources.refreshrequest.vo.RefreshRequestBearerToken;
 import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
 
 import java.time.ZonedDateTime;
@@ -27,6 +28,8 @@ class RefreshRequest {
     @NonNull
     private final RefreshRequestStatus status;
 
+    private RefreshRequestBearerToken bearerToken;
+
     private final ZonedDateTime createDate;
 
     static RefreshRequest restore(RefreshRequestSnapshot refreshRequestSnapshot) {
@@ -36,6 +39,7 @@ class RefreshRequest {
                 refreshRequestSnapshot.getArtistId(),
                 refreshRequestSnapshot.getOwnerId(),
                 refreshRequestSnapshot.getStatus(),
+                RefreshRequestBearerToken.of(refreshRequestSnapshot.getBearerToken()),
                 refreshRequestSnapshot.getCreateDate()
         );
     }
@@ -47,6 +51,7 @@ class RefreshRequest {
                 .artistId(artistId)
                 .ownerId(ownerId)
                 .status(status)
+                .bearerToken(bearerToken.getBearerToken())
                 .createDate(createDate)
                 .build();
     }

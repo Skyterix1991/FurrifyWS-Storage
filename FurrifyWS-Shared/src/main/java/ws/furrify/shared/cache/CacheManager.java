@@ -2,10 +2,10 @@ package ws.furrify.shared.cache;
 
 import java.time.Duration;
 
-public interface CacheManager<K, V> {
-    boolean exists(K key);
+public interface CacheManager {
+    boolean exists(final String key);
 
-    V get(K key);
+    <V> V get(final String key, final Class<V> cast);
 
-    void put(K key, V value, Duration expiration);
+    <V> void put(final String key, final V value, final Duration expiration);
 }
