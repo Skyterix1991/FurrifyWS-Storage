@@ -163,7 +163,8 @@ public class RestExceptionControllerAdvice extends ResponseEntityExceptionHandle
             ExternalProviderTokenExpiredException.class,
             ExternalProviderServerSideErrorException.class,
             HardLimitForEntityTypeException.class,
-            NoArtistSourcesFoundForRefreshException.class
+            NoArtistSourcesFoundForRefreshException.class,
+            NotificationAlreadyViewedException.class
     })
     protected ResponseEntity<Object> handleException(
             RestException exception) {

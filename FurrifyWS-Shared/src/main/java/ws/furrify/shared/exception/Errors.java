@@ -47,6 +47,7 @@ public enum Errors {
     HARD_LIMIT_FOR_ENTITY_TYPE("Hard limit of [limit={0}] has been reached for [entity={1}], further create requests will not be accepted."),
     UNIDENTIFIED("Unknown error occurred."),
     FILE_HASH_DUPLICATE_IN_POST("File with this [md5={0}] hash already exists in this post with [uuid={1}]."),
+    NOTIFICATION_HAS_ALREADY_BEEN_VIEWED("Notification [uuid={0}] has already been viewed."),
     NO_ARTIST_SOURCES_FOUND_FOR_REFRESH("Artist [uuid={0}] contains no sources to be refreshed.");
 
 
