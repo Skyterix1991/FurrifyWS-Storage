@@ -63,7 +63,7 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.12.11</version>
+            <version>1.12.12</version>
         </dependency>
         <!-- Web -->
         <dependency>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>18.0.1</version>
+            <version>18.0.2</version>
             <scope>compile</scope>
         </dependency>
         <!-- Utils -->

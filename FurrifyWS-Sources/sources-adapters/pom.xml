@@ -110,11 +110,6 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
-        <!-- Cache -->
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring-boot-starter-remote</artifactId>
-        </dependency>
         <!-- Events/Apache Avro -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -141,17 +136,6 @@
                 <version>${keycloak.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-bom</artifactId>
-                <version>${version.infinispan}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-spring-boot-starter</artifactId>
             </dependency>
         </dependencies>
     </dependencyManagement>
