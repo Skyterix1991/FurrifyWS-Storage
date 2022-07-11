@@ -1,4 +1,4 @@
-package ws.furrify.sources.source.vo;
+package ws.furrify.sources.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

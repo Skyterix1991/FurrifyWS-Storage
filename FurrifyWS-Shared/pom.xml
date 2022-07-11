@@ -140,6 +140,12 @@
                         <configuration>
                             <sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-sources/avro</outputDirectory>
+                            <imports>
+                                <import>${project.basedir}/src/main/resources/avro/remote-content.avsc</import>
+                            </imports>
+                            <includes>
+                                <include>*.avsc</include>
+                            </includes>
                             <stringType>String</stringType>
                             <createSetters>false</createSetters>
                             <enableDecimalLogicalType>true</enableDecimalLogicalType>

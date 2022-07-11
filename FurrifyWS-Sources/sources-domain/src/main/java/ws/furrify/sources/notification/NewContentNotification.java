@@ -5,11 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import ws.furrify.shared.exception.Errors;
-import ws.furrify.shared.exception.NotificationAlreadyViewedException;
-import ws.furrify.sources.refreshrequest.vo.RefreshRequestBearerToken;
-import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.time.ZonedDateTime;
 import java.util.List;

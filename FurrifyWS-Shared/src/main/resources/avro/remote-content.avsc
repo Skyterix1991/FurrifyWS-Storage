@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "namespace": "ws.furrify.sources.vo",
+  "doc": "Remote content data containing required information to perform state change across multiple microservices.",
+  "name": "RemoteContentData",
+  "fields": [
+    {
+      "name": "contentIdentifier",
+      "type": "string",
+      "doc": "Unique remote content identifier."
+    },
+    {
+      "name": "uri",
+      "type": "string",
+      "doc": "Remote artist uri."
+    }
+  ]
+}

@@ -2,7 +2,7 @@ package ws.furrify.sources.source.strategy;
 
 import lombok.NonNull;
 import ws.furrify.shared.cache.CacheManager;
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.util.HashMap;
 import java.util.Set;

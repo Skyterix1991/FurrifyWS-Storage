@@ -5,7 +5,7 @@ import ws.furrify.shared.vo.SourceOriginType;
 import ws.furrify.sources.source.SourceEvent;
 import ws.furrify.sources.source.SourceQueryRepository;
 import ws.furrify.sources.source.converter.SourceStrategyAttributeConverter;
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.net.URI;
 import java.net.URISyntaxException;

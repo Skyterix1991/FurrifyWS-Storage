@@ -5,8 +5,8 @@ import lombok.extern.java.Log;
 import ws.furrify.shared.kafka.DomainEventPublisher;
 import ws.furrify.sources.source.dto.SourceDTO;
 import ws.furrify.sources.source.dto.SourceDtoFactory;
-import ws.furrify.sources.source.vo.RemoteContent;
 import ws.furrify.sources.source.vo.RemoteContentData;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.net.URI;
 import java.net.URISyntaxException;

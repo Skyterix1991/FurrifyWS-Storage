@@ -2,25 +2,10 @@
   {
     "type": "record",
     "namespace": "ws.furrify.sources.source.vo",
-    "doc": "Remote content data containing required information to perform state change across multiple microservices.",
-    "name": "RemoteContentData",
-    "fields": [
-      {
-        "name": "contentIdentifier",
-        "type": "string",
-        "doc": "Unique remote content identifier."
-      },
-      {
-        "name": "uri",
-        "type": "string",
-        "doc": "Remote artist uri."
-      }
-    ]
-  },
-  {
-    "type": "record",
-    "namespace": "ws.furrify.sources.source.vo",
     "doc": "Source data containing required information to perform state change across multiple microservices.",
+    "imports": [
+      "remote-content.avsc"
+    ],
     "name": "SourceData",
     "fields": [
       {
@@ -54,9 +39,9 @@
         "name": "remoteContentList",
         "type": {
           "type": "array",
-          "items": "ws.furrify.sources.source.vo.RemoteContentData"
+          "items": "ws.furrify.sources.vo.RemoteContentData"
         },
-        "doc": "Remote content set."
+        "doc": "Remote content list."
       },
       {
         "name": "dataHashMap",
@@ -171,7 +156,7 @@
         "name": "remoteContentList",
         "type": {
           "type": "array",
-          "items": "ws.furrify.sources.source.vo.RemoteContentData"
+          "items": "ws.furrify.sources.vo.RemoteContentData"
         },
         "doc": "Remote content set."
       },

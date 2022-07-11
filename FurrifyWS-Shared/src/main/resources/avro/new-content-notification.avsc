@@ -1,0 +1,76 @@
+[
+  {
+    "type": "record",
+    "namespace": "ws.furrify.sources.notification.vo",
+    "doc": "New content notification data containing required information to perform state change across multiple microservices.",
+    "name": "NewContentNotificationData",
+    "fields": [
+      {
+        "name": "ownerId",
+        "type": "string",
+        "doc": "Source owner UUID."
+      },
+      {
+        "name": "sourceId",
+        "type": "string",
+        "doc": "Source UUID."
+      },
+      {
+        "name": "remoteContentList",
+        "type": {
+          "type": "array",
+          "items": "ws.furrify.sources.vo.RemoteContentData"
+        },
+        "doc": "Remote content list."
+      },
+      {
+        "name": "viewed",
+        "type": "boolean",
+        "doc": "Is notification viewed."
+      },
+      {
+        "name": "createDate",
+        "type": [
+          "null",
+          {
+            "type": "long",
+            "logicalType": "timestamp-millis"
+          }
+        ],
+        "default": null,
+        "doc": "Create timestamp."
+      }
+    ]
+  },
+  {
+    "type": "record",
+    "namespace": "ws.furrify.sources.notification",
+    "doc": "New content notification state change event.",
+    "name": "NewContentNotificationEvent",
+    "fields": [
+      {
+        "name": "state",
+        "type": "string",
+        "doc": "A event type performed on that record. (Can be acquired using NotificationEventType enum.)"
+      },
+      {
+        "name": "notificationId",
+        "type": "string",
+        "doc": "A notification UUID event is targeted at."
+      },
+      {
+        "name": "data",
+        "type": "ws.furrify.sources.notification.vo.NewContentNotificationData",
+        "doc": "Notification data."
+      },
+      {
+        "name": "occurredOn",
+        "type": {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        },
+        "doc": "Instant event occurred on."
+      }
+    ]
+  }
+]

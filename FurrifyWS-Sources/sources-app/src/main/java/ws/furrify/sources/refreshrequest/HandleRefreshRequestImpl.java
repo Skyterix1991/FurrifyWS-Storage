@@ -14,7 +14,7 @@ import ws.furrify.sources.source.SourceRemoteContentUtils;
 import ws.furrify.sources.source.dto.query.SourceDetailsQueryDTO;
 import ws.furrify.sources.source.strategy.SourceArtistContentFetcher;
 import ws.furrify.sources.source.strategy.SourceStrategy;
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.util.HashSet;
 import java.util.List;

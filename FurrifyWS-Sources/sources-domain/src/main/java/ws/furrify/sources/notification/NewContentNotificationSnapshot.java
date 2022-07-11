@@ -6,8 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.time.ZonedDateTime;
 import java.util.List;

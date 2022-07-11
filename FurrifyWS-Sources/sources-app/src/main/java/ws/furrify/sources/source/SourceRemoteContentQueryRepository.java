@@ -1,6 +1,6 @@
 package ws.furrify.sources.source;
 
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.util.List;
 import java.util.UUID;

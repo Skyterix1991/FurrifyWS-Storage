@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author Skyte
  */
 public interface RefreshRequestQueryRepository {
-    Long getIdByRefreshRequestId(UUID sourceId);
+    Long getIdByRefreshRequestId(UUID refreshRequestId);
 
     Page<RefreshRequestDetailsQueryDTO> findAllByOwnerId(UUID ownerId, Pageable pageable);
 

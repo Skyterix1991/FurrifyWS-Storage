@@ -33,7 +33,7 @@
                 <column updatable="false" nullable="false"/>
             </basic>
             <one-to-many fetch="LAZY" name="remoteContentList"
-                         target-entity="ws.furrify.sources.source.vo.RemoteContent">
+                         target-entity="ws.furrify.sources.vo.RemoteContent">
                 <cascade>
                     <cascade-all/>
                 </cascade>
@@ -77,7 +77,7 @@
         </attributes>
     </entity>
 
-    <entity class="ws.furrify.sources.source.vo.RemoteContent" access="FIELD">
+    <entity class="ws.furrify.sources.vo.RemoteContent" access="FIELD">
         <table name="source_remote_contents"/>
         <attributes>
             <id name="id">

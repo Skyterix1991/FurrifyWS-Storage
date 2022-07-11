@@ -16,7 +16,7 @@ import ws.furrify.sources.providers.deviantart.DeviantArtServiceClientImpl;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtDeviationQueryDTO;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserDeviationsQueryDTO;
 import ws.furrify.sources.providers.deviantart.dto.DeviantArtUserQueryDTO;
-import ws.furrify.sources.source.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContent;
 
 import java.io.IOException;
 import java.net.URI;

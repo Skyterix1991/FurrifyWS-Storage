@@ -53,7 +53,7 @@
       {
         "name": "refreshRequestId",
         "type": "string",
-        "doc": "A source UUID event is targeted at."
+        "doc": "A refresh request UUID event is targeted at."
       },
       {
         "name": "data",
