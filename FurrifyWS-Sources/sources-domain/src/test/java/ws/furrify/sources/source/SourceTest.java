@@ -378,4 +378,20 @@ class SourceTest {
         );
     }
 
+    @Test
+    @DisplayName("Replace remote content")
+    void replaceRemoteContent() throws URISyntaxException {
+        // Given new remote content
+        List<RemoteContent> remoteContentList = List.of(
+                new RemoteContent(null, "test", new URI("https://example.com")),
+                new RemoteContent(null, "test1", new URI("https://example.com"))
+        );
+        // When replace remote content
+        source.replaceRemoteContent(remoteContentList);
+        // Then remote content was replaced in source
+        var newRemoteContentInSource = source.getSnapshot().getRemoteContentList();
+
+        assertEquals(remoteContentList, newRemoteContentInSource, "Remote content list was not replaced.");
+    }
+
 }

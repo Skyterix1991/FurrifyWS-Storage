@@ -26,7 +26,7 @@ class RefreshRequest {
     private final UUID ownerId;
 
     @NonNull
-    private final RefreshRequestStatus status;
+    private RefreshRequestStatus status;
 
     private RefreshRequestBearerToken bearerToken;
 
@@ -54,5 +54,29 @@ class RefreshRequest {
                 .bearerToken(bearerToken.getBearerToken())
                 .createDate(createDate)
                 .build();
+    }
+
+    void markInProgress() {
+        if (status != RefreshRequestStatus.PENDING) {
+            throw new IllegalStateException("You can only set status to IN_PROGRESS if current status is PENDING. Current status is " + status + ".");
+        }
+
+        this.status = RefreshRequestStatus.IN_PROGRESS;
+    }
+
+    void markCompleted() {
+        if (status != RefreshRequestStatus.IN_PROGRESS) {
+            throw new IllegalStateException("You can only set status to COMPLETED if current status is IN_PROGRESS. Current status is " + status + ".");
+        }
+
+        this.status = RefreshRequestStatus.COMPLETED;
+    }
+
+    void markFailed() {
+        if (status != RefreshRequestStatus.IN_PROGRESS) {
+            throw new IllegalStateException("You can only set status to FAILED if current status is IN_PROGRESS. Current status is " + status + ".");
+        }
+
+        this.status = RefreshRequestStatus.FAILED;
     }
 }

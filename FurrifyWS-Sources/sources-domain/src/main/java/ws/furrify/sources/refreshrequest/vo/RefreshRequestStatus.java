@@ -11,7 +11,7 @@ public enum RefreshRequestStatus {
      */
     PENDING,
     /**
-     * Request is currently being fullfilled.
+     * Request is currently being fulfilled.
      */
     IN_PROGRESS,
     /**

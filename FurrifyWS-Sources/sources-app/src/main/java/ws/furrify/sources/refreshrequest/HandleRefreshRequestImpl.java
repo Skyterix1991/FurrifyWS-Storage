@@ -19,6 +19,7 @@ import ws.furrify.sources.source.strategy.SourceArtistContentFetcher;
 import ws.furrify.sources.source.strategy.SourceStrategy;
 import ws.furrify.sources.vo.RemoteContent;
 
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,16 +43,29 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
 
     @Override
     public void handleRefreshRequest(@NonNull final RefreshRequestDTO refreshRequestDTO) {
+        RefreshRequest refreshRequest = refreshRequestFactory.from(refreshRequestDTO);
+        RefreshRequestSnapshot refreshRequestSnapshot = refreshRequest.getSnapshot();
+
+        sendRefreshStatusChangeEvent(
+                refreshRequestDTO.getOwnerId(),
+                refreshRequest,
+                RefreshRequestStatus.IN_PROGRESS
+        );
+
         // Fetch all sources that will need content check refresh
         List<SourceDetailsQueryDTO> sourceList = sourceQueryRepository.findAllByOwnerIdAndArtistId(
-                refreshRequestDTO.getOwnerId(),
-                refreshRequestDTO.getArtistId()
+                refreshRequestSnapshot.getOwnerId(),
+                refreshRequestSnapshot.getArtistId()
         );
 
         // Sanity check
         if (sourceList.isEmpty()) {
             // Mark as Failure if somehow no sources to check
-            sendRefreshStatusChangeEvent(refreshRequestDTO, RefreshRequestStatus.FAILED);
+            sendRefreshStatusChangeEvent(
+                    refreshRequestDTO.getOwnerId(),
+                    refreshRequest,
+                    RefreshRequestStatus.FAILED
+            );
 
             return;
         }
@@ -65,7 +79,11 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
                     (SourceArtistContentFetcher) strategy;
             // Sanity check
             if (sourceArtistContentFetcher == null) {
-                sendRefreshStatusChangeEvent(refreshRequestDTO, RefreshRequestStatus.FAILED);
+                sendRefreshStatusChangeEvent(
+                        refreshRequestDTO.getOwnerId(),
+                        refreshRequest,
+                        RefreshRequestStatus.FAILED
+                );
 
                 return;
             }
@@ -76,11 +94,15 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
             try {
                 fetchedArtistContentSet = sourceArtistContentFetcher.fetchArtistContent(
                         sourceDTO.getData(),
-                        refreshRequestDTO.getBearerToken(),
+                        refreshRequestSnapshot.getBearerToken(),
                         cacheManager
                 );
             } catch (RuntimeException e) {
-                sendRefreshStatusChangeEvent(refreshRequestDTO, RefreshRequestStatus.FAILED);
+                sendRefreshStatusChangeEvent(
+                        refreshRequestDTO.getOwnerId(),
+                        refreshRequest,
+                        RefreshRequestStatus.FAILED
+                );
 
                 return;
             }
@@ -88,7 +110,7 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
             // Fetch current artist remote content saved in database
             Set<RemoteContent> currentSourceRemoteContentSet =
                     sourceRemoteContentQueryRepository.findAllByOwnerIdAndSourceId(
-                            refreshRequestDTO.getOwnerId(),
+                            refreshRequestSnapshot.getOwnerId(),
                             sourceDTO.getSourceId()
                     ).stream().collect(Collectors.toUnmodifiableSet());
 
@@ -107,12 +129,16 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
             // Send new content notifications to users
             sendNewContentNotificationEvent(
                     sourceDTO.getSourceId(),
-                    refreshRequestDTO.getOwnerId(),
+                    refreshRequestSnapshot.getOwnerId(),
                     uniqueNewContent.stream().toList()
             );
         }
 
-        sendRefreshStatusChangeEvent(refreshRequestDTO, RefreshRequestStatus.COMPLETED);
+        sendRefreshStatusChangeEvent(
+                refreshRequestDTO.getOwnerId(),
+                refreshRequest,
+                RefreshRequestStatus.COMPLETED
+        );
     }
 
     private void sendNewContentNotificationEvent(final UUID sourceId,
@@ -125,12 +151,12 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
                 NewContentNotificationUtils.createNewContentNotificationEvent(
                         DomainEventPublisher.NewContentNotificationEventType.CREATED,
                         NewContentNotificationDTO.builder()
-                                .notificationId(null)
+                                .notificationId(UUID.randomUUID())
                                 .sourceId(sourceId)
                                 .ownerId(ownerId)
                                 .newRemoteContentList(newRemoteContent)
                                 .viewed(false)
-                                .createDate(null)
+                                .createDate(ZonedDateTime.now())
                                 .build()
                 )
         );
@@ -153,19 +179,22 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
         );
     }
 
-    private void sendRefreshStatusChangeEvent(final RefreshRequestDTO refreshRequestDTO,
+    private void sendRefreshStatusChangeEvent(final UUID ownerId,
+                                              final RefreshRequest refreshRequest,
                                               final RefreshRequestStatus status) {
-        RefreshRequest refreshRequest = refreshRequestFactory.from(
-                refreshRequestDTO.toBuilder()
-                        .status(status)
-                        .build()
-        );
+
+        switch (status) {
+            case IN_PROGRESS -> refreshRequest.markInProgress();
+            case COMPLETED -> refreshRequest.markCompleted();
+            case FAILED -> refreshRequest.markFailed();
+            default -> throw new IllegalStateException("Status not handled.");
+        }
 
         // Publish refresh request event
         refreshRequestEventPublisher.publish(
                 DomainEventPublisher.Topic.REFRESH_REQUEST,
                 // Use ownerId as key
-                refreshRequestDTO.getOwnerId(),
+                ownerId,
                 RefreshRequestUtils.createRefreshRequestEvent(
                         DomainEventPublisher.RefreshRequestEventType.UPDATED,
                         refreshRequest

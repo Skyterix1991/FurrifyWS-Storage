@@ -40,6 +40,30 @@ final public class RefreshRequestFacade {
     }
 
     /**
+     * Handle refresh request event.
+     *
+     * @param refreshRequestEvent Refresh request event to handle.
+     */
+    public void handleRefreshRequestEvent(final UUID key, final RefreshRequestEvent refreshRequestEvent) {
+        RefreshRequestDTO refreshRequestDTO = refreshRequestDtoFactory.from(key, refreshRequestEvent);
+        // Start only if request is not handled yet
+        if (refreshRequestDTO.getStatus() == RefreshRequestStatus.PENDING) {
+            handleRefreshRequest(refreshRequestDTO);
+        } else {
+            log.warning("RefreshRequest was not handled. Status is not PENDING but request [id=" + refreshRequestEvent.getRefreshRequestId() + "] was received.");
+        }
+    }
+
+    /**
+     * Handle refresh request. Contact API's and do all necessary things to get new content from other platforms for particular artist.
+     *
+     * @param refreshRequestDTO Refresh request dto.
+     */
+    public void handleRefreshRequest(final RefreshRequestDTO refreshRequestDTO) {
+        handleRefreshRequestImpl.handleRefreshRequest(refreshRequestDTO);
+    }
+
+    /**
      * Creates refresh request.
      *
      * @param ownerId  Owner of refresh request to be created.
@@ -48,19 +72,6 @@ final public class RefreshRequestFacade {
      */
     public UUID createRefreshRequest(UUID ownerId, UUID artistId) {
         return createRefreshRequestImpl.createRefreshRequest(ownerId, artistId);
-    }
-
-    /**
-     * Handle refresh request. Contact API's and do all necessary things to get new content from other platforms for particular artist.
-     *
-     * @param refreshRequestEvent Refresh request event to handle.
-     */
-    public void handleRefreshRequest(final UUID key, final RefreshRequestEvent refreshRequestEvent) {
-        RefreshRequestDTO refreshRequestDTO = refreshRequestDtoFactory.from(key, refreshRequestEvent);
-        // Start only if request is not handled yet
-        if (refreshRequestDTO.getStatus() == RefreshRequestStatus.PENDING) {
-            handleRefreshRequestImpl.handleRefreshRequest(refreshRequestDTO);
-        }
     }
 
     private void saveRefreshRequestToDatabase(final RefreshRequestDTO refreshRequestDTO) {
