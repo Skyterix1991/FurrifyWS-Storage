@@ -8,9 +8,13 @@ import ws.furrify.shared.vo.SourceOriginType;
 import ws.furrify.sources.keycloak.PropertyHolder;
 import ws.furrify.sources.source.strategy.PatreonV1SourceStrategy;
 import ws.furrify.sources.source.strategy.SourceStrategy;
+import ws.furrify.sources.vo.RemoteContent;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -26,7 +30,7 @@ class SourceTest {
     private Source source;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws URISyntaxException {
         PropertyHolder.AUTH_SERVER = "test";
 
         sourceSnapshot = SourceSnapshot.builder()
@@ -35,6 +39,9 @@ class SourceTest {
                 .ownerId(UUID.randomUUID())
                 .originId(UUID.randomUUID())
                 .originType(SourceOriginType.ARTIST)
+                .remoteContentList(List.of(
+                        new RemoteContent(null, "sad21-21dsa", new URI("https://example.com/sad21-21dsa"))
+                ))
                 .strategy(new SourceStrategy() {
                     @Override
                     public ValidationResult validateMedia(final HashMap<String, String> data) {
@@ -91,7 +98,7 @@ class SourceTest {
 
     @Test
     @DisplayName("Update data with new values for artist")
-    void updateData() {
+    void updateData() throws URISyntaxException {
         // Given source with origin artist, request data and new mocked strategy
         HashMap<String, String> requestData = new HashMap<>() {{
             put("test", "test2");
@@ -103,6 +110,9 @@ class SourceTest {
                 .ownerId(UUID.randomUUID())
                 .originId(UUID.randomUUID())
                 .originType(SourceOriginType.ARTIST)
+                .remoteContentList(List.of(
+                        new RemoteContent(null, "sad21-21dsa", new URI("https://example.com/sad21-21dsa"))
+                ))
                 .strategy(new SourceStrategy() {
                     @Override
                     public ValidationResult validateMedia(final HashMap<String, String> data) {
@@ -206,7 +216,7 @@ class SourceTest {
 
     @Test
     @DisplayName("Update data with new values for media")
-    void updateData4() {
+    void updateData4() throws URISyntaxException {
         // Given source with origin artist, request data and new mocked strategy
         HashMap<String, String> requestData = new HashMap<>() {{
             put("test", "test2");
@@ -218,6 +228,9 @@ class SourceTest {
                 .ownerId(UUID.randomUUID())
                 .originId(UUID.randomUUID())
                 .originType(SourceOriginType.MEDIA)
+                .remoteContentList(List.of(
+                        new RemoteContent(null, "sad21-21dsa", new URI("https://example.com/sad21-21dsa"))
+                ))
                 .strategy(new SourceStrategy() {
                     @Override
                     public ValidationResult validateMedia(final HashMap<String, String> data) {
@@ -285,7 +298,7 @@ class SourceTest {
 
     @Test
     @DisplayName("Update data with new values for attachment")
-    void updateData5() {
+    void updateData5() throws URISyntaxException {
         // Given source with origin artist, request data and new mocked strategy
         HashMap<String, String> requestData = new HashMap<>() {{
             put("test", "test2");
@@ -297,6 +310,9 @@ class SourceTest {
                 .ownerId(UUID.randomUUID())
                 .originId(UUID.randomUUID())
                 .originType(SourceOriginType.ATTACHMENT)
+                .remoteContentList(List.of(
+                        new RemoteContent(null, "sad21-21dsa", new URI("https://example.com/sad21-21dsa"))
+                ))
                 .strategy(new SourceStrategy() {
                     @Override
                     public ValidationResult validateMedia(final HashMap<String, String> data) {

@@ -8,6 +8,7 @@ import lombok.ToString;
 import ws.furrify.sources.vo.RemoteContent;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ class NewContentNotification {
                 refreshRequestSnapshot.getNotificationId(),
                 refreshRequestSnapshot.getSourceId(),
                 refreshRequestSnapshot.getOwnerId(),
-                refreshRequestSnapshot.getNewRemoteContentList(),
+                new ArrayList<>(refreshRequestSnapshot.getNewRemoteContentList()),
                 refreshRequestSnapshot.isViewed(),
                 refreshRequestSnapshot.getCreateDate()
         );
@@ -51,7 +52,7 @@ class NewContentNotification {
                 .notificationId(notificationId)
                 .sourceId(sourceId)
                 .ownerId(ownerId)
-                .newRemoteContentList(newRemoteContentList)
+                .newRemoteContentList(new ArrayList<>(newRemoteContentList))
                 .viewed(viewed)
                 .createDate(createDate)
                 .build();

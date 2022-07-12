@@ -55,7 +55,7 @@ class Source {
                 sourceSnapshot.getOriginId(),
                 sourceSnapshot.getPostId(),
                 sourceSnapshot.getOwnerId(),
-                sourceSnapshot.getRemoteContentList(),
+                new ArrayList<>(sourceSnapshot.getRemoteContentList()),
                 new HashMap<>(sourceSnapshot.getData()),
                 sourceSnapshot.getStrategy(),
                 sourceSnapshot.getOriginType(),
@@ -70,7 +70,7 @@ class Source {
                 .postId(postId)
                 .sourceId(sourceId)
                 .ownerId(ownerId)
-                .remoteContentList(remoteContentList)
+                .remoteContentList(new ArrayList<>(remoteContentList))
                 .data(new HashMap<>(data))
                 .strategy(strategy)
                 .originType(originType)

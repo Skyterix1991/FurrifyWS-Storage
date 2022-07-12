@@ -77,6 +77,13 @@ class SourceUtils {
                         .setPostId(
                                 (snapshot.getPostId() != null) ? snapshot.getPostId().toString() : null
                         )
+                        .setRemoteContentList(
+                                snapshot.getRemoteContentList().stream()
+                                        .map(remoteContent -> RemoteContentData.newBuilder()
+                                                .setContentIdentifier(remoteContent.getContentIdentifier())
+                                                .setUri(remoteContent.getUri().toString())
+                                                .build()).toList()
+                        )
                         .build()
                 )
                 .setOccurredOn(Instant.now())
