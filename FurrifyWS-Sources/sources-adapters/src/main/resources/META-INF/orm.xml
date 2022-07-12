@@ -77,6 +77,37 @@
         </attributes>
     </entity>
 
+    <entity class="ws.furrify.sources.notification.NewContentNotificationSnapshot" access="FIELD">
+        <table name="new_content_notifications"/>
+        <attributes>
+            <id name="id">
+                <generated-value strategy="SEQUENCE"/>
+            </id>
+            <basic name="notificationId">
+                <column unique="true" updatable="false" nullable="false"/>
+            </basic>
+            <basic name="sourceId">
+                <column updatable="false" nullable="false"/>
+            </basic>
+            <basic name="ownerId">
+                <column updatable="false" nullable="false"/>
+            </basic>
+            <basic name="viewed">
+                <column nullable="false"/>
+            </basic>
+            <basic name="createDate">
+                <column updatable="false" nullable="false"/>
+            </basic>
+            <one-to-many fetch="LAZY" name="newRemoteContentList"
+                         target-entity="ws.furrify.sources.vo.RemoteContent">
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+        </attributes>
+    </entity>
+
+
     <entity class="ws.furrify.sources.vo.RemoteContent" access="FIELD">
         <table name="source_remote_contents"/>
         <attributes>

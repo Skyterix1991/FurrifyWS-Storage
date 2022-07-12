@@ -113,6 +113,11 @@ public class RestExceptionControllerAdvice extends ResponseEntityExceptionHandle
         return responseEntity(new ApiError(BAD_REQUEST, exception));
     }
 
+    @ExceptionHandler(java.lang.IllegalStateException.class)
+    protected ResponseEntity<Object> handleIllegalStateException(java.lang.IllegalStateException exception) {
+        return responseEntity(new ApiError(BAD_REQUEST, exception));
+    }
+
     @ExceptionHandler(RequestRejectedException.class)
     protected ResponseEntity<Object> handleRequestRejectedException(RequestRejectedException exception) {
         return responseEntity(new ApiError(BAD_REQUEST, exception));

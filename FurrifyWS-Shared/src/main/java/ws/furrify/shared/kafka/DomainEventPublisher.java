@@ -27,7 +27,8 @@ public interface DomainEventPublisher<T> {
         POST("post_events"),
         ARTIST("artist_events"),
         AVATAR("avatar_events"),
-        TAG("tag_events");
+        TAG("tag_events"),
+        NEW_CONTENT_NOTIFICATION("new_content_notification_events");
 
         /**
          * Topic name for kafka.
@@ -41,6 +42,14 @@ public interface DomainEventPublisher<T> {
         public String getTopicName() {
             return topicName;
         }
+    }
+
+    enum NewContentNotificationEventType {
+        /**
+         * Events that can occur on NewContentNotification entity.
+         */
+        CREATED,
+        UPDATED
     }
 
     enum RefreshRequestEventType {

@@ -1,15 +1,19 @@
 package ws.furrify.sources.source;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import ws.furrify.shared.vo.SourceOriginType;
 import ws.furrify.sources.source.strategy.DeviantArtV1SourceStrategy;
+import ws.furrify.sources.vo.RemoteContent;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -27,6 +31,7 @@ class SourceTest implements CommandLineRunner {
                 .ifPresent((profile) -> createTestingSources());
     }
 
+    @SneakyThrows
     private void createTestingSources() {
         var userId = UUID.fromString("4b255497-0200-4ee1-8922-892233173c10");
         var postId = UUID.fromString("7c2c35f3-20e9-4b7e-a455-253b7b78e2fa");
@@ -84,6 +89,9 @@ class SourceTest implements CommandLineRunner {
                             put("url", "https://www.deviantart.com/freak-side/art/C-h-i-l-l-i-n-911198824");
                             put("deviation_id", "EC0AAF26-D129-8165-7E5A-1B3E0B2BBF82");
                         }})
+                        .remoteContentList(List.of(
+                                new RemoteContent(null, "dsja29-dsaj32", new URI("https://example.com/dsja29-dsaj32"))
+                        ))
                         .originType(SourceOriginType.ATTACHMENT)
                         .createDate(ZonedDateTime.now())
                         .build()

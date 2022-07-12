@@ -1,6 +1,6 @@
 package ws.furrify.sources.notification;
 
-import ws.furrify.sources.notification.dto.NotificationDTO;
+import ws.furrify.sources.notification.dto.NewContentNotificationDTO;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -8,18 +8,18 @@ import java.util.UUID;
 
 final class NotificationFactory {
 
-    NewContentNotification from(NotificationDTO notificationDTO) {
+    NewContentNotification from(NewContentNotificationDTO newContentNotificationDTO) {
 
         NewContentNotificationSnapshot snapshot = NewContentNotificationSnapshot.builder()
-                .id(notificationDTO.getId())
-                .notificationId(notificationDTO.getNotificationId() != null ? notificationDTO.getNotificationId() : UUID.randomUUID())
-                .sourceId(notificationDTO.getSourceId())
-                .ownerId(notificationDTO.getOwnerId())
+                .id(newContentNotificationDTO.getId())
+                .notificationId(newContentNotificationDTO.getNotificationId() != null ? newContentNotificationDTO.getNotificationId() : UUID.randomUUID())
+                .sourceId(newContentNotificationDTO.getSourceId())
+                .ownerId(newContentNotificationDTO.getOwnerId())
                 .newRemoteContentList
-                        (notificationDTO.getNewRemoteContentList() != null ? notificationDTO.getNewRemoteContentList() : new ArrayList<>())
-                .viewed(notificationDTO.getViewed())
+                        (newContentNotificationDTO.getNewRemoteContentList() != null ? newContentNotificationDTO.getNewRemoteContentList() : new ArrayList<>())
+                .viewed(newContentNotificationDTO.getViewed())
                 .createDate(
-                        notificationDTO.getCreateDate() != null ? notificationDTO.getCreateDate() : ZonedDateTime.now()
+                        newContentNotificationDTO.getCreateDate() != null ? newContentNotificationDTO.getCreateDate() : ZonedDateTime.now()
                 )
                 .build();
 

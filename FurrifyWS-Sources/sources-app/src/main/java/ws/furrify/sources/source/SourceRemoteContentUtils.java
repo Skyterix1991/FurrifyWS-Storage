@@ -1,8 +1,8 @@
 package ws.furrify.sources.source;
 
 import ws.furrify.shared.kafka.DomainEventPublisher;
-import ws.furrify.sources.source.vo.RemoteContentData;
 import ws.furrify.sources.vo.RemoteContent;
+import ws.furrify.sources.vo.RemoteContentData;
 
 import java.time.Instant;
 import java.util.Set;

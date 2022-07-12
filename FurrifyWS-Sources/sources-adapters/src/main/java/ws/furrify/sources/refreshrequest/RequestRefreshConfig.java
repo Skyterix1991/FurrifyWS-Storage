@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import ws.furrify.shared.cache.CacheManager;
 import ws.furrify.sources.feign.ArtistServiceImpl;
 import ws.furrify.sources.kafka.KafkaTopicEventPublisher;
+import ws.furrify.sources.notification.NewContentNotificationEvent;
 import ws.furrify.sources.refreshrequest.dto.RefreshRequestDtoFactory;
 import ws.furrify.sources.source.SourceQueryRepository;
 import ws.furrify.sources.source.SourceRemoteContentEvent;
@@ -21,6 +22,7 @@ class RequestRefreshConfig {
     private final RefreshRequestQueryRepository refreshRequestQueryRepository;
     private final KafkaTopicEventPublisher<RefreshRequestEvent> refreshRequestEventPublisher;
     private final KafkaTopicEventPublisher<SourceRemoteContentEvent> sourceRemoteContentEventPublisher;
+    private final KafkaTopicEventPublisher<NewContentNotificationEvent> newContentNotificationEventKafkaTopicEventPublisher;
     private final ArtistServiceImpl artistService;
 
     private final CacheManager cacheManager;
@@ -41,6 +43,7 @@ class RequestRefreshConfig {
                         refreshRequestFactory,
                         sourceRemoteContentEventPublisher,
                         refreshRequestEventPublisher,
+                        newContentNotificationEventKafkaTopicEventPublisher,
                         sourceQueryRepository,
                         sourceRemoteContentQueryRepository,
                         cacheManager

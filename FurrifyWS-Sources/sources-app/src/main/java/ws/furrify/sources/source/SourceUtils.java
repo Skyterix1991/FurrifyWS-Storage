@@ -2,10 +2,12 @@ package ws.furrify.sources.source;
 
 import ws.furrify.shared.kafka.DomainEventPublisher;
 import ws.furrify.sources.source.converter.SourceStrategyAttributeConverter;
-import ws.furrify.sources.source.vo.RemoteContentData;
 import ws.furrify.sources.source.vo.SourceData;
+import ws.furrify.sources.vo.RemoteContentData;
 
 import java.time.Instant;
+
+;
 
 /**
  * Utils class regarding Source entity.

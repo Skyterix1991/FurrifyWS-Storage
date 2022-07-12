@@ -1,7 +1,8 @@
 package ws.furrify.sources.notification.dto;
 
 import lombok.RequiredArgsConstructor;
-import ws.furrify.sources.notification.NotificationEvent;
+import ws.furrify.sources.notification.NewContentNotificationEvent;
+import ws.furrify.sources.notification.NewContentNotificationQueryRepository;
 import ws.furrify.sources.vo.RemoteContent;
 
 import java.net.URI;
@@ -18,11 +19,11 @@ import java.util.UUID;
  * @author Skyte
  */
 @RequiredArgsConstructor
-public class NotificationDtoFactory {
+public class NewContentNotificationDtoFactory {
 
-    private final NotificationQueryRepository notificationQueryRepository;
+    private final NewContentNotificationQueryRepository newContentNotificationQueryRepository;
 
-    public NotificationDTO from(UUID key, NotificationEvent notificationEvent) {
+    public NewContentNotificationDTO from(UUID key, NewContentNotificationEvent notificationEvent) {
         Instant createDateInstant = notificationEvent.getData().getCreateDate();
         ZonedDateTime createDate = null;
 
@@ -33,9 +34,9 @@ public class NotificationDtoFactory {
         var notificationId = UUID.fromString(notificationEvent.getNotificationId());
         var sourceId = UUID.fromString(notificationEvent.getData().getSourceId());
 
-        return NotificationDTO.builder()
+        return NewContentNotificationDTO.builder()
                 .id(
-                        notificationQueryRepository.getIdByNotificationId(notificationId)
+                        newContentNotificationQueryRepository.getIdByNotificationId(notificationId)
                 )
                 .notificationId(notificationId)
                 .sourceId(sourceId)

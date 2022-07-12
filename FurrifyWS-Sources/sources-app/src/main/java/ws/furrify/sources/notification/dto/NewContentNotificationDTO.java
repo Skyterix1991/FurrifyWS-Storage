@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 @Value
 @ToString
-public class NotificationDTO {
+public class NewContentNotificationDTO {
     Long id;
 
     UUID notificationId;

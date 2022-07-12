@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import ws.furrify.shared.cache.CacheManager;
 import ws.furrify.shared.kafka.DomainEventPublisher;
+import ws.furrify.sources.notification.NewContentNotificationEvent;
+import ws.furrify.sources.notification.NewContentNotificationUtils;
+import ws.furrify.sources.notification.dto.NewContentNotificationDTO;
 import ws.furrify.sources.refreshrequest.dto.RefreshRequestDTO;
 import ws.furrify.sources.refreshrequest.vo.RefreshRequestStatus;
 import ws.furrify.sources.source.SourceQueryRepository;
@@ -19,6 +22,7 @@ import ws.furrify.sources.vo.RemoteContent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
 
     private final DomainEventPublisher<SourceRemoteContentEvent> sourceRemoteContentEventPublisher;
     private final DomainEventPublisher<RefreshRequestEvent> refreshRequestEventPublisher;
+    private final DomainEventPublisher<NewContentNotificationEvent> notificationEventPublisher;
 
     private final SourceQueryRepository sourceQueryRepository;
     private final SourceRemoteContentQueryRepository sourceRemoteContentQueryRepository;
@@ -99,11 +104,36 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
             HashSet<RemoteContent> uniqueNewContent = new HashSet<>(fetchedArtistContentSet);
             uniqueNewContent.removeAll(currentSourceRemoteContentSet);
 
-
-            // TODO Send notifications
+            // Send new content notifications to users
+            sendNewContentNotificationEvent(
+                    sourceDTO.getSourceId(),
+                    refreshRequestDTO.getOwnerId(),
+                    uniqueNewContent.stream().toList()
+            );
         }
 
         sendRefreshStatusChangeEvent(refreshRequestDTO, RefreshRequestStatus.COMPLETED);
+    }
+
+    private void sendNewContentNotificationEvent(final UUID sourceId,
+                                                 final UUID ownerId,
+                                                 final List<RemoteContent> newRemoteContent) {
+        notificationEventPublisher.publish(
+                DomainEventPublisher.Topic.NEW_CONTENT_NOTIFICATION,
+                // Use ownerId as key
+                ownerId,
+                NewContentNotificationUtils.createNewContentNotificationEvent(
+                        DomainEventPublisher.NewContentNotificationEventType.CREATED,
+                        NewContentNotificationDTO.builder()
+                                .notificationId(null)
+                                .sourceId(sourceId)
+                                .ownerId(ownerId)
+                                .newRemoteContentList(newRemoteContent)
+                                .viewed(false)
+                                .createDate(null)
+                                .build()
+                )
+        );
     }
 
     private void sendUpdateSourceRemoteContentEvent(final SourceDetailsQueryDTO sourceDetailsQueryDTO,

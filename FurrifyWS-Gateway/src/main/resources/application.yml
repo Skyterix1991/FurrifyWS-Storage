@@ -9,7 +9,7 @@ spring:
         - id: sourcesService
           uri: lb://SOURCES-SERVICE
           predicates:
-            - Path=/users/*/sources/**, /users/*/posts/*/media/*/sources, /users/*/posts/*/attachments/*/sources, /users/*/artists/*/sources, /users/*/artists/*/sources/refreshes
+            - Path=/users/*/sources/**, /users/*/posts/*/media/*/sources, /users/*/posts/*/attachments/*/sources, /users/*/artists/*/sources, /users/*/artists/*/sources/refreshes, /users/*/sources/*/notifications/**, /users/*/notifications/**
         - id: postsService
           uri: lb://POSTS-SERVICE
           predicates:
