@@ -45,6 +45,8 @@ final class CreateRefreshRequestImpl implements CreateRefreshRequest {
             throw new NoArtistSourcesFoundForRefreshException(Errors.NO_ARTIST_SOURCES_FOUND_FOR_REFRESH.getErrorMessage(artistId));
         }
 
+        // TODO Handle sources with no content fetcher interface implemented, throw exception that no source has this option
+
         // Generate refresh request UUID
         UUID refreshRequestId = UUID.randomUUID();
 

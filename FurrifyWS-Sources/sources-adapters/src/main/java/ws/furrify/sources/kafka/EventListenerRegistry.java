@@ -89,7 +89,7 @@ class EventListenerRegistry {
                                  @Payload RefreshRequestEvent refreshRequestEvent) {
         log.info("Event received from kafka [topic=" + topic + "] [partition=" + partition + "].");
 
-        refreshRequestFacade.handleRefreshRequest(UUID.fromString(key), refreshRequestEvent);
+        refreshRequestFacade.handleRefreshRequestWorkerEvent(UUID.fromString(key), refreshRequestEvent);
     }
 
 

@@ -74,18 +74,9 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
         for (final SourceDetailsQueryDTO sourceDTO : sourceList) {
             SourceStrategy strategy = sourceDTO.getStrategy();
 
-            // Cast strategy to fetching interface
-            SourceArtistContentFetcher sourceArtistContentFetcher =
-                    (SourceArtistContentFetcher) strategy;
-            // Sanity check
-            if (sourceArtistContentFetcher == null) {
-                sendRefreshStatusChangeEvent(
-                        refreshRequestDTO.getOwnerId(),
-                        refreshRequest,
-                        RefreshRequestStatus.FAILED
-                );
-
-                return;
+            // Check if current strategy supports new content checking and cast if it does
+            if (!(strategy instanceof SourceArtistContentFetcher sourceArtistContentFetcher)) {
+                continue;
             }
 
             Set<RemoteContent> fetchedArtistContentSet;
@@ -114,13 +105,16 @@ final class HandleRefreshRequestImpl implements HandleRefreshRequest {
                             sourceDTO.getSourceId()
                     ).stream().collect(Collectors.toUnmodifiableSet());
 
-            // Check if any new content is needed to be saved in database
-            if (!currentSourceRemoteContentSet.containsAll(fetchedArtistContentSet)) {
-                sendUpdateSourceRemoteContentEvent(
-                        sourceDTO,
-                        fetchedArtistContentSet
-                );
+            // Check if there is no new content
+            if (currentSourceRemoteContentSet.containsAll(fetchedArtistContentSet)) {
+                break;
             }
+
+            // Update current content in source
+            sendUpdateSourceRemoteContentEvent(
+                    sourceDTO,
+                    fetchedArtistContentSet
+            );
 
             // Remove current content fetched from source to leave only new unique content
             HashSet<RemoteContent> uniqueNewContent = new HashSet<>(fetchedArtistContentSet);

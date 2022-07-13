@@ -65,8 +65,48 @@ class RefreshRequestTest {
     }
 
     @Test
-    @DisplayName("Mark as IN_PROGRESS with current status different than PENDING")
+    @DisplayName("Mark as IN_PROGRESS with current status IN_PROGRESS")
     void markInProgress2() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.IN_PROGRESS)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markInProgress() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markInProgress(), "Status was changed but status change to the same one should be blocked.");
+    }
+
+    @Test
+    @DisplayName("Mark as IN_PROGRESS with current status COMPLETED")
+    void markInProgress3() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.COMPLETED)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markInProgress() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markInProgress(), "Status was changed but status change backwards should be blocked.");
+    }
+
+    @Test
+    @DisplayName("Mark as IN_PROGRESS with current status FAILED")
+    void markInProgress4() {
         // Given
         refreshRequestSnapshot = RefreshRequestSnapshot.builder()
                 .id(0L)
@@ -82,6 +122,89 @@ class RefreshRequestTest {
         // When markInProgress() method called
         // Then change should be blocked
         assertThrows(IllegalStateException.class, () -> refreshRequest.markInProgress(), "Status was changed but status change backwards should be blocked.");
+    }
+
+    @Test
+    @DisplayName("Mark as COMPLETED")
+    void markCompleted() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.IN_PROGRESS)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markCompleted() method called
+        refreshRequest.markCompleted();
+        // Then status is set to IN_PROGRESS
+        var snapshot = refreshRequest.getSnapshot();
+
+        assertEquals(RefreshRequestStatus.COMPLETED, snapshot.getStatus(), "Status has not been changed.");
+    }
+
+    @Test
+    @DisplayName("Mark as COMPLETED with current status COMPLETED")
+    void markCompleted2() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.COMPLETED)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markCompleted() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markCompleted(), "Status was changed but status change to the same one should be blocked.");
+    }
+
+    @Test
+    @DisplayName("Mark as COMPLETED with current status FAILED")
+    void markCompleted3() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.FAILED)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markCompleted() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markCompleted(), "Status was changed but status change backwards should be blocked.");
+    }
+
+    @Test
+    @DisplayName("Mark as COMPLETED with current status PENDING")
+    void markCompleted4() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.PENDING)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markCompleted() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markCompleted(), "Status was changed but status change backwards should be blocked.");
     }
 
     @Test
@@ -101,52 +224,69 @@ class RefreshRequestTest {
         refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
         // When markFailed() method called
         refreshRequest.markFailed();
-        // Then status is set to FAILED
+        // Then status is set to IN_PROGRESS
         var snapshot = refreshRequest.getSnapshot();
 
         assertEquals(RefreshRequestStatus.FAILED, snapshot.getStatus(), "Status has not been changed.");
     }
 
     @Test
-    @DisplayName("Mark as FAILED with current status different than IN_PROGRESS")
+    @DisplayName("Mark as FAILED with current status FAILED")
     void markFailed2() {
-        // Given
-        // When markFailed() method called
-        // Then change should be blocked
-        assertThrows(IllegalStateException.class, () -> refreshRequest.markFailed(), "Status was changed but status change backwards should be blocked.");
-    }
-
-
-    @Test
-    @DisplayName("Mark as COMPLETED")
-    void markCompleted() {
         // Given
         refreshRequestSnapshot = RefreshRequestSnapshot.builder()
                 .id(0L)
                 .refreshRequestId(UUID.randomUUID())
                 .ownerId(UUID.randomUUID())
                 .artistId(UUID.randomUUID())
-                .status(RefreshRequestStatus.IN_PROGRESS)
+                .status(RefreshRequestStatus.FAILED)
                 .bearerToken("Bearer test")
                 .createDate(ZonedDateTime.now())
                 .build();
 
         refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
-        // When markCompleted() method called
-        refreshRequest.markCompleted();
-        // Then status is set to COMPLETED
-        var snapshot = refreshRequest.getSnapshot();
-
-        assertEquals(RefreshRequestStatus.COMPLETED, snapshot.getStatus(), "Status has not been changed.");
+        // When markFailed() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markFailed(), "Status was changed but status change to the same one should be blocked.");
     }
 
     @Test
-    @DisplayName("Mark as COMPLETED with current status different than IN_PROGRESS")
-    void markCompleted2() {
+    @DisplayName("Mark as FAILED with current status COMPLETED")
+    void markFailed3() {
         // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.COMPLETED)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
         // When markFailed() method called
         // Then change should be blocked
-        assertThrows(IllegalStateException.class, () -> refreshRequest.markCompleted(), "Status was changed but status change backwards should be blocked.");
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markFailed(), "Status was changed but status change backwards should be blocked.");
     }
 
+    @Test
+    @DisplayName("Mark as IN_PROGRESS with current status PENDING")
+    void markFailed4() {
+        // Given
+        refreshRequestSnapshot = RefreshRequestSnapshot.builder()
+                .id(0L)
+                .refreshRequestId(UUID.randomUUID())
+                .ownerId(UUID.randomUUID())
+                .artistId(UUID.randomUUID())
+                .status(RefreshRequestStatus.PENDING)
+                .bearerToken("Bearer test")
+                .createDate(ZonedDateTime.now())
+                .build();
+
+        refreshRequest = RefreshRequest.restore(refreshRequestSnapshot);
+        // When markFailed() method called
+        // Then change should be blocked
+        assertThrows(IllegalStateException.class, () -> refreshRequest.markFailed(), "Status was changed but status change backwards should be blocked.");
+    }
 }

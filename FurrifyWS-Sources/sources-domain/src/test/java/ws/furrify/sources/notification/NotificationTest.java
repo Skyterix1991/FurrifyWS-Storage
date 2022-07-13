@@ -36,6 +36,7 @@ class NotificationTest {
                 .createDate(ZonedDateTime.now())
                 .build();
 
+        // TODO Manually create aggregate on every domain test on every microservice
         newContentNotification = NewContentNotification.restore(newContentNotificationSnapshot);
     }
 

@@ -44,7 +44,7 @@ final public class RefreshRequestFacade {
      *
      * @param refreshRequestEvent Refresh request event to handle.
      */
-    public void handleRefreshRequestEvent(final UUID key, final RefreshRequestEvent refreshRequestEvent) {
+    public void handleRefreshRequestWorkerEvent(final UUID key, final RefreshRequestEvent refreshRequestEvent) {
         RefreshRequestDTO refreshRequestDTO = refreshRequestDtoFactory.from(key, refreshRequestEvent);
         // Start only if request is not handled yet
         if (refreshRequestDTO.getStatus() == RefreshRequestStatus.PENDING) {
